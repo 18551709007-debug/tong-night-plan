@@ -2870,17 +2870,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       .couple-train-mid { position: absolute; z-index: 4; left: 50%; top: calc(100% - 1.6mm); padding: 0 .8mm; color: #617086; background: white; font-size: .58em; font-weight: 650; line-height: 3.2mm; white-space: nowrap; transform: translateX(-50%); }
       footer { position: absolute; right: 11mm; bottom: 4mm; left: 11mm; display: flex; justify-content: space-between; color: #7a8798; font-size: 7.5pt; }
       footer strong { color: #4f5f73; }
-    </style></head><body>${pdfPagesMarkup()}
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker.register("./sw.js").catch(function (error) {
-          console.warn("离线缓存注册失败", error);
-        });
-      });
-    }
-  </script>
-</body></html>`;
+    </style></head><body>${pdfPagesMarkup()}</body></html>`;
   }
 
   function printPdf() {
