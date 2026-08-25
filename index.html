@@ -2928,5 +2928,14 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
   renderHome();
 })();
 </script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("./sw.js").catch(function (error) {
+        console.warn("离线缓存注册失败", error);
+      });
+    });
+  }
+</script>
 </body>
 </html>
