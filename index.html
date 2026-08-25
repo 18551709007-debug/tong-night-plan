@@ -1,0 +1,2942 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#f3f6fb">
+  <title>TONG的夜班计划</title>
+  <style>:root {
+  color-scheme: light;
+  --page: #f3f6fb;
+  --card: #ffffff;
+  --ink: #162033;
+  --muted: #718096;
+  --line: #dfe6ef;
+  --soft-line: #edf1f6;
+  --blue: #1769e0;
+  --blue-dark: #0d53bc;
+  --blue-soft: #e9f2ff;
+  --warning: #9a5b00;
+  --warning-bg: #fff7e5;
+  --danger: #c63838;
+  --shadow: 0 14px 38px rgba(31, 55, 88, .09);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  min-height: 100%;
+  background: var(--page);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 100% 0, rgba(55, 135, 244, .10), transparent 34rem),
+    var(--page);
+  overscroll-behavior-y: none;
+}
+
+button, input, select, textarea { font: inherit; }
+button, label, select { -webkit-tap-highlight-color: transparent; }
+button { color: inherit; }
+[hidden] { display: none !important; }
+
+.app-shell {
+  width: min(100%, 760px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+}
+
+.app-bar {
+  position: sticky;
+  z-index: 30;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: calc(58px + var(--safe-top));
+  padding: calc(10px + var(--safe-top)) 18px 10px;
+  border-bottom: 1px solid rgba(215, 224, 236, .84);
+  background: rgba(247, 249, 253, .90);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  color: white;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #287cf0, #0d5dcc);
+  box-shadow: 0 8px 18px rgba(23, 105, 224, .22);
+}
+
+.brand-mark svg { width: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.app-bar-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; }
+.app-bar-copy strong { font-size: 17px; letter-spacing: .02em; }
+.app-bar-copy span { margin-top: 1px; color: var(--muted); font-size: 11px; }
+
+.icon-button, .close-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.icon-button svg { width: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.close-button { color: #5f6b7e; font-size: 27px; line-height: 1; box-shadow: none; background: #f1f4f8; }
+
+.view { padding: 22px 16px calc(30px + var(--safe-bottom)); }
+.home-view { max-width: 520px; margin: 0 auto; }
+
+.hero { padding: 20px 12px 25px; text-align: center; }
+.hero-icon {
+  display: grid;
+  place-items: center;
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 15px;
+  color: var(--blue);
+  border-radius: 22px;
+  background: linear-gradient(145deg, #fff, #e8f1ff);
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(23, 105, 224, .08);
+}
+.hero-icon svg { width: 42px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.hero h1 { margin: 0; font-size: 26px; letter-spacing: -.02em; }
+.hero p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+.home-card, .assignment-card, .table-shell {
+  border: 1px solid rgba(215, 224, 236, .9);
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.home-card { margin-bottom: 15px; padding: 18px; }
+
+.section-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.section-heading > div { display: flex; min-width: 0; flex-direction: column; }
+.section-heading strong { font-size: 16px; }
+.section-heading small { margin-top: 3px; color: var(--muted); font-size: 12px; }
+.step-number {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 auto;
+  color: var(--blue);
+  border-radius: 50%;
+  background: var(--blue-soft);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.group-choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.group-choice {
+  min-height: 48px;
+  padding: 9px 5px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  font-weight: 700;
+}
+.group-choice[aria-checked="true"] {
+  color: var(--blue-dark);
+  border-color: #78aef4;
+  background: var(--blue-soft);
+  box-shadow: inset 0 0 0 1px rgba(23, 105, 224, .12);
+}
+
+.file-picker {
+  display: flex;
+  min-height: 132px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1.5px dashed #98bce9;
+  border-radius: 17px;
+  background: linear-gradient(180deg, #f8fbff, #f0f6ff);
+  cursor: pointer;
+}
+.file-picker:active { transform: scale(.995); background: #eaf3ff; }
+.file-picker-icon { display: grid; place-items: center; width: 43px; height: 43px; margin-bottom: 9px; color: var(--blue); border-radius: 14px; background: white; box-shadow: 0 6px 16px rgba(23, 105, 224, .12); }
+.file-picker-icon svg { width: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.file-picker strong { color: var(--blue-dark); font-size: 16px; }
+.file-picker > span:last-child { margin-top: 5px; color: var(--muted); font-size: 12px; }
+
+.import-progress { display: flex; align-items: center; justify-content: center; gap: 9px; padding: 14px 4px 0; color: var(--muted); font-size: 13px; }
+.spinner { width: 17px; height: 17px; border: 2px solid #c9d8ec; border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.privacy-note { display: flex; align-items: flex-start; gap: 9px; margin: 20px 4px 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.privacy-note svg { width: 20px; flex: 0 0 auto; fill: none; stroke: #4d8bdc; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.secondary-wide, .primary-wide, .danger-quiet, .link-button {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+.secondary-wide { margin-top: 12px; color: var(--blue-dark); border: 1px solid #b7d1f3; background: #f6faff; }
+.primary-wide { color: white; border: 0; background: linear-gradient(180deg, #2678e7, #1164d5); box-shadow: 0 8px 18px rgba(23, 105, 224, .19); }
+.danger-quiet { min-height: 40px; margin-top: 12px; color: var(--danger); border: 1px solid #f0caca; background: #fff8f8; font-size: 13px; }
+
+.plan-view { padding: 0 10px calc(30px + var(--safe-bottom)); }
+.plan-toolbar {
+  position: sticky;
+  z-index: 20;
+  top: calc(58px + var(--safe-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 -10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(215, 224, 236, .86);
+  background: rgba(247, 249, 253, .92);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+.toolbar-actions { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: 8px; }
+.text-icon-button, .compact-button, .export-button, .mode-button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.text-icon-button { padding-left: 7px; }
+.text-icon-button svg, .compact-button svg, .export-button svg { width: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.export-button { color: white; border-color: var(--blue); background: var(--blue); }
+.mode-button { color: var(--blue-dark); border-color: #9bc0ef; background: var(--blue-soft); }
+.compact-button:disabled { opacity: .35; }
+.compact-button.active { color: var(--blue-dark); border-color: #8cb8ef; background: var(--blue-soft); }
+.compact-button.attention { color: #8a5100; border-color: #e3c177; background: #fff8e8; }
+.preview-mode .edit-only { display: none !important; }
+
+.plan-heading { padding: 19px 8px 14px; text-align: center; }
+.plan-heading h1 { margin: 0; font-size: clamp(20px, 5.2vw, 25px); letter-spacing: .01em; }
+.plan-heading p { margin: 6px 0 0; color: var(--muted); font-size: 11px; }
+
+.assignment-card { margin: 0 3px 12px; padding: 13px; border-radius: 16px; box-shadow: 0 8px 24px rgba(31, 55, 88, .06); }
+.assignment-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.assignment-head > div { display: flex; flex-direction: column; }
+.assignment-head strong { font-size: 14px; }
+.assignment-head span { margin-top: 2px; color: var(--muted); font-size: 11px; }
+.batch-panel { margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--soft-line); }
+.batch-status { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.batch-status strong { font-size: 12px; }
+.batch-status button { padding: 4px 0; color: var(--blue); border: 0; background: transparent; font-size: 12px; }
+.member-chips { display: flex; gap: 8px; overflow-x: auto; padding: 1px 1px 5px; scrollbar-width: none; }
+.member-chips::-webkit-scrollbar { display: none; }
+.member-chip { min-width: 74px; min-height: 38px; padding: 0 13px; color: var(--blue-dark); border: 1px solid #a9c9f0; border-radius: 999px; background: #f4f8ff; font-weight: 700; white-space: nowrap; }
+.empty-members { color: var(--muted); font-size: 12px; line-height: 38px; }
+
+.table-shell { margin: 0 3px; overflow: hidden; border-radius: 16px; box-shadow: 0 10px 28px rgba(31, 55, 88, .07); }
+.plan-grid { display: grid; width: 100%; align-items: stretch; }
+.table-header { min-height: 48px; color: #354359; border-bottom: 1px solid #cad6e4; background: #eaf1fa; }
+.table-header .cell { font-size: 13px; font-weight: 800; line-height: 1.12; }
+.plan-row { position: relative; min-height: 72px; border-bottom: 1px solid var(--soft-line); background: #fff; touch-action: pan-y; }
+.plan-row:last-child { border-bottom: 0; }
+.plan-row:nth-child(even) { background: #fbfcfe; }
+.plan-row.selected { background: #eaf3ff; box-shadow: inset 0 0 0 1.5px #7cafee; }
+.plan-row.drag-target { background: #dfeeff; box-shadow: inset 0 2px var(--blue); }
+.cell { position: relative; display: flex; min-width: 0; align-items: center; justify-content: center; padding: 5px 2px; text-align: center; }
+.data-cell { color: #162033; font-size: 15px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.time-cell, .vehicle-cell { font-size: 16px; font-weight: 760; }
+.range-cell { padding-right: 3px; padding-left: 3px; font-size: 11px; line-height: 1.25; white-space: nowrap; }
+.entryTime-cell.empty { color: #a3adbb; font-weight: 500; }
+.manualCleaning-cell { color: #a3adbb; font-size: 11px; }
+.manualCleaning-cell.yes { color: var(--blue-dark); font-weight: 800; }
+.sequence-cell { color: var(--blue); font-size: 12px; font-weight: 750; }
+.sequence-badge { display: grid; place-items: center; width: 28px; height: 28px; color: var(--blue); border-radius: 50%; background: #dcecff; font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "PingFang SC", sans-serif; font-size: 13px; font-weight: 700; }
+.selected .sequence-badge { color: white; background: var(--blue); font-size: 0; }
+.selected .sequence-badge::after { content: "✓"; font-size: 14px; }
+.worker-cell { color: #263b58; font-size: 14px; }
+.worker-cell.empty { color: #a3adbb; font-size: 11px; font-weight: 500; }
+.track-cell { font-size: 15px; }
+.vehicle-stack { display: flex; min-width: 0; align-items: center; justify-content: center; flex-direction: column; gap: 3px; }
+.vehicle-number-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.vehicle-number { font-size: 16px; font-weight: 780; line-height: 1; }
+.couple-badge { position: absolute; left: calc(100% + 1px); top: -7px; color: var(--blue); font-size: 8px; font-weight: 850; line-height: 1; }
+.wheel-setting-tag { color: var(--blue-dark); font-size: 9px; font-weight: 780; line-height: 1; white-space: nowrap; }
+.drag-handle { position: absolute; z-index: 4; left: 0; top: 0; width: 42px; height: 100%; padding: 0; border: 0; background: transparent; touch-action: none; }
+.batch-mode .drag-handle { opacity: 0; pointer-events: none; }
+.couple-mark { position: absolute; z-index: 5; left: -8px; top: calc(50% - 2px); width: 14px; height: 74px; overflow: visible; pointer-events: none; }
+.couple-mark path { fill: none; stroke: #111827; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.couple-train-mid { position: absolute; z-index: 6; left: 50%; top: calc(100% - 7px); max-width: calc(100% - 6px); overflow: hidden; padding: 0 3px; color: #617086; background: #fff; font-size: 8px; font-weight: 650; line-height: 14px; text-overflow: ellipsis; white-space: nowrap; transform: translateX(-50%); pointer-events: none; }
+.plan-grid[data-columns="8"] .cell, .plan-grid[data-columns="7"] .cell { padding-right: 1px; padding-left: 1px; }
+.plan-grid[data-columns="8"] .data-cell { font-size: 11px; }
+.plan-grid[data-columns="7"] .data-cell { font-size: 12px; }
+.plan-grid[data-columns="7"] .manualCleaning-cell { font-size: 10px; }
+.plan-grid[data-columns="8"] .time-cell, .plan-grid[data-columns="8"] .vehicle-cell { font-size: 12px; }
+.plan-grid[data-columns="7"] .time-cell, .plan-grid[data-columns="7"] .vehicle-cell { font-size: 13px; }
+.plan-grid[data-columns="8"] .table-header .cell, .table-header[data-columns="8"] .cell { font-size: 10px; }
+.table-header[data-columns="7"] .cell { font-size: 11px; }
+
+.plan-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 8px 0; color: var(--muted); font-size: 10px; }
+
+dialog {
+  width: min(calc(100% - 20px), 560px);
+  max-height: min(88vh, 780px);
+  padding: 0;
+  color: var(--ink);
+  border: 0;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 28px 80px rgba(17, 31, 50, .28);
+}
+dialog::backdrop { background: rgba(18, 29, 45, .48); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+.sheet-dialog { overflow: auto; }
+.dialog-header { position: sticky; z-index: 3; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px; border-bottom: 1px solid var(--soft-line); background: rgba(255,255,255,.95); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.dialog-header h2 { margin: 0; font-size: 21px; }
+.dialog-header p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+.settings-section { padding: 18px; border-bottom: 8px solid #f4f6f9; }
+.settings-title { display: flex; flex-direction: column; margin-bottom: 12px; }
+.settings-title strong { font-size: 16px; }
+.settings-title span { margin-top: 3px; color: var(--muted); font-size: 11px; }
+.group-name-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--soft-line); }
+.group-name-row { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.group-name-row span { color: #536278; font-size: 10px; font-weight: 700; }
+.group-name-row input { width: 100%; min-width: 0; min-height: 42px; padding: 0 9px; color: var(--ink); border: 1px solid var(--line); border-radius: 11px; outline: none; background: #fbfcfe; text-align: center; font-weight: 700; }
+.group-name-row input:focus { border-color: #76acf0; box-shadow: 0 0 0 3px rgba(23, 105, 224, .10); }
+.people-list { display: flex; flex-direction: column; gap: 8px; }
+.person-row { display: grid; grid-template-columns: minmax(0, 1fr) 92px 38px; gap: 7px; }
+.person-row input, .person-row select, .add-person-form input, .add-person-form select, .edit-grid input, .edit-grid select, textarea {
+  width: 100%; min-height: 42px; padding: 0 11px; color: var(--ink); border: 1px solid var(--line); border-radius: 11px; outline: none; background: #fbfcfe;
+}
+.person-row input:focus, .person-row select:focus, .add-person-form input:focus, .add-person-form select:focus, .edit-grid input:focus, .edit-grid select:focus, textarea:focus { border-color: #76acf0; box-shadow: 0 0 0 3px rgba(23, 105, 224, .10); }
+.delete-person { display: grid; place-items: center; padding: 0; color: var(--danger); border: 1px solid #f1d1d1; border-radius: 11px; background: #fff8f8; font-size: 19px; }
+.empty-people { padding: 15px; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; text-align: center; font-size: 12px; }
+.add-person-form { display: grid; grid-template-columns: minmax(0, 1fr) 90px 58px; gap: 7px; margin-top: 12px; }
+.add-person-form button { color: white; border: 0; border-radius: 11px; background: var(--blue); font-weight: 700; }
+.position-options { display: flex; flex-direction: column; gap: 8px; padding: 0; border: 0; }
+.position-options legend { margin-bottom: 9px; color: #44536a; font-size: 13px; font-weight: 700; }
+.position-options label { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 13px; }
+.position-options label:has(input:checked) { border-color: #88b5ef; background: var(--blue-soft); }
+.position-options input { width: 18px; height: 18px; accent-color: var(--blue); }
+.position-options span { display: flex; min-width: 0; flex-direction: column; }
+.position-options strong { font-size: 13px; }
+.position-options small { margin-top: 2px; color: var(--muted); font-size: 9.5px; }
+.preset-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.preset-row { display: grid; grid-template-columns: minmax(0, 1fr) 86px; gap: 8px; padding: 9px; border: 1px solid var(--line); border-radius: 13px; background: #fbfcfe; }
+.preset-row.active { border-color: #88b5ef; background: var(--blue-soft); box-shadow: inset 0 0 0 1px rgba(23,105,224,.08); }
+.preset-name-field { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+.preset-name-field span { color: #65748a; font-size: 9px; font-weight: 700; }
+.preset-name-field input { width: 100%; min-width: 0; min-height: 38px; padding: 0 9px; color: var(--ink); border: 1px solid var(--line); border-radius: 10px; outline: none; background: white; font-size: 13px; font-weight: 700; }
+.preset-name-field input:focus { border-color: #76acf0; box-shadow: 0 0 0 3px rgba(23,105,224,.10); }
+.preset-use-button { align-self: end; min-height: 38px; padding: 0 8px; color: var(--blue-dark); border: 1px solid #9bc0ef; border-radius: 10px; background: white; font-size: 11px; font-weight: 750; }
+.preset-use-button:disabled { color: white; border-color: var(--blue); background: var(--blue); opacity: 1; }
+.column-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 0 16px; padding: 0; border: 0; }
+.column-options legend { grid-column: 1 / -1; margin-bottom: 1px; color: #44536a; font-size: 13px; font-weight: 700; }
+.column-options label { display: flex; min-height: 42px; align-items: center; justify-content: space-between; gap: 8px; padding: 0 11px; border: 1px solid var(--line); border-radius: 12px; background: #fbfcfe; font-size: 12px; font-weight: 700; }
+.column-options label:has(input:checked) { color: var(--blue-dark); border-color: #9bc0ef; background: #f2f7ff; }
+.column-options input { width: 19px; height: 19px; accent-color: var(--blue); }
+.restore-display { min-height: 42px; margin-top: 12px; font-size: 13px; }
+.dialog-footer { position: sticky; bottom: 0; padding: 12px 18px calc(12px + var(--safe-bottom)); background: rgba(255,255,255,.96); }
+
+.edit-dialog form { padding: 18px; }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.edit-grid label, .full-field { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
+.edit-grid label > span, .full-field > span { color: #536278; font-size: 11px; font-weight: 700; }
+.edit-grid input, .edit-grid select { display: block; min-width: 0; max-width: 100%; }
+#editTime { width: 100%; min-width: 0; min-inline-size: 0; inline-size: 100%; }
+.full-field { margin-top: 14px; }
+textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
+.automatic-remark { min-height: 42px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 11px; background: #f7f9fc; font-size: 13px; line-height: 1.5; }
+.move-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 15px 0 12px; }
+.move-actions button { min-height: 40px; color: #46566c; border: 1px solid var(--line); border-radius: 11px; background: #f7f9fc; font-size: 12px; font-weight: 700; }
+.edit-dialog .danger-quiet { margin: 0 0 12px; }
+
+.export-dialog { width: min(calc(100% - 14px), 620px); overflow: auto; }
+.export-help { margin: 14px; padding: 10px 12px; color: #526177; border-radius: 11px; background: #f0f5fb; font-size: 12px; line-height: 1.5; }
+.export-dialog img { display: block; width: calc(100% - 28px); height: auto; margin: 0 14px; border: 1px solid var(--line); background: white; box-shadow: 0 7px 20px rgba(31,55,88,.09); -webkit-touch-callout: default; }
+.export-dialog .link-button { width: calc(100% - 28px); margin: 14px; }
+.export-check-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; padding: 16px 16px 10px; }
+.export-stat { display: flex; min-width: 0; min-height: 75px; align-items: center; justify-content: center; flex-direction: column; padding: 9px 5px; border: 1px solid var(--line); border-radius: 13px; background: #f8fafd; text-align: center; }
+.export-stat span { color: var(--muted); font-size: 10px; }
+.export-stat strong { margin-top: 5px; color: var(--blue-dark); font-size: 17px; }
+.export-columns { grid-column: 1 / -1; margin: 2px 0 0; padding: 10px 12px; color: #526177; border-radius: 11px; background: #f0f5fb; font-size: 11px; line-height: 1.55; }
+.export-choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 4px 16px 18px; }
+.export-choice-grid button { display: flex; min-height: 92px; align-items: flex-start; justify-content: center; flex-direction: column; padding: 14px; color: #24405f; border: 1px solid #b9cee8; border-radius: 15px; background: linear-gradient(180deg, #fbfdff, #f0f6ff); text-align: left; }
+.export-choice-grid strong { font-size: 15px; }
+.export-choice-grid span { margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.pdf-preview-dialog { width: min(calc(100% - 14px), 1000px); max-height: 94vh; overflow: auto; }
+.pdf-preview-help { margin: 14px 16px 0; padding: 10px 12px; color: #526177; border-radius: 11px; background: #f0f5fb; font-size: 12px; line-height: 1.5; }
+.pdf-preview-pages { display: flex; align-items: center; flex-direction: column; gap: 14px; padding: 14px; background: #e9edf3; }
+.pdf-preview-pages .pdf-page { position: relative; display: flex; width: 100%; max-width: 900px; aspect-ratio: 297 / 210; flex: 0 0 auto; flex-direction: column; padding: 3% 3.6% 2.8%; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(25,40,64,.15); }
+.pdf-preview-pages header { flex: 0 0 12%; text-align: center; }
+.pdf-preview-pages h1 { margin: 0; font-size: clamp(10px, 2.2vw, 21px); }
+.pdf-preview-pages header p { margin: .5% 0 0; color: #66758a; font-size: clamp(5px, 1vw, 9px); }
+.pdf-preview-pages table { width: 100%; flex: 1; border-collapse: collapse; table-layout: fixed; font-size: clamp(5px, 1.15vw, 10px); }
+.pdf-preview-pages th { padding: .5%; color: #334155; border-bottom: 1px solid #cad6e4; background: #eaf1fa; }
+.pdf-preview-pages th.col-sequence { color: var(--blue); font-size: .9em; }
+.pdf-preview-pages td { position: relative; padding: .4%; border-bottom: 1px solid #edf1f6; text-align: center; overflow: visible; overflow-wrap: anywhere; }
+.pdf-preview-pages tbody tr:nth-child(even) td { background: #fafbfd; }
+.pdf-preview-pages .col-sequence { width: 7%; }
+.pdf-preview-pages .col-time { width: 12%; }
+.pdf-preview-pages .col-vehicle { width: 13%; }
+.pdf-preview-pages .col-track { width: 9%; }
+.pdf-preview-pages .col-worker { width: 11%; }
+.pdf-preview-pages .col-entryTime { width: 14%; }
+.pdf-preview-pages .col-manualCleaning { width: 34%; }
+.pdf-preview-pages .sequence-badge { display: inline-grid; width: clamp(8px, 2vw, 20px); height: clamp(8px, 2vw, 20px); place-items: center; font-size: clamp(4px, .9vw, 8px); }
+.pdf-preview-pages .vehicle-stack { gap: clamp(1px, .25vw, 3px); }
+.pdf-preview-pages .vehicle-number { font-size: clamp(5px, 1.1vw, 10px); }
+.pdf-preview-pages .couple-badge { top: -.5em; font-size: .52em; }
+.pdf-preview-pages .wheel-setting-tag { font-size: clamp(3.5px, .72vw, 7px); }
+.pdf-preview-pages .couple-mark { left: 1px; top: 50%; width: clamp(3px, .8vw, 8px); height: 100%; }
+.pdf-preview-pages .couple-train-mid { top: calc(100% - .65em); padding: 0 .25em; font-size: .52em; line-height: 1.3em; }
+.pdf-preview-pages footer { display: flex; flex: 0 0 4%; align-items: flex-end; justify-content: space-between; color: #7a8798; font-size: clamp(4px, .85vw, 8px); }
+.pdf-preview-footer { position: sticky; bottom: 0; padding: 12px 18px calc(12px + var(--safe-bottom)); border-top: 1px solid var(--soft-line); background: rgba(255,255,255,.96); }
+#printFrame { position: fixed; left: -10px; bottom: -10px; width: 1px; height: 1px; border: 0; opacity: .01; pointer-events: none; }
+
+.toast { position: fixed; z-index: 100; left: 50%; bottom: calc(24px + var(--safe-bottom)); max-width: calc(100% - 40px); padding: 10px 15px; color: white; border-radius: 999px; background: rgba(24, 34, 50, .92); box-shadow: 0 10px 30px rgba(0,0,0,.18); font-size: 12px; line-height: 1.3; opacity: 0; pointer-events: none; transform: translate(-50%, 12px); transition: .22s ease; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 390px) {
+  .view { padding-left: 11px; padding-right: 11px; }
+  .plan-view { padding-left: 6px; padding-right: 6px; }
+  .plan-toolbar { margin-left: -6px; margin-right: -6px; }
+  .text-icon-button span, .compact-button span { display: none; }
+  .text-icon-button, .compact-button { width: 38px; padding: 0; }
+  .toolbar-actions { min-width: 0; gap: 5px; }
+  .mode-button { min-width: 56px; padding: 0 6px; font-size: 10px; }
+  #autoSortButton { width: 62px; overflow: hidden; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+  .export-button { padding: 0 9px; }
+  .cell { padding-left: 1px; padding-right: 1px; }
+  .data-cell { font-size: 14px; }
+  .time-cell, .vehicle-cell { font-size: 15px; }
+  .vehicle-number { font-size: 13px; }
+  .couple-badge { top: -6px; font-size: 7px; }
+  .wheel-setting-tag { font-size: 7.5px; }
+  .range-cell { font-size: 8.5px; letter-spacing: -.02em; }
+  .plan-grid[data-columns="7"] .manualCleaning-cell { font-size: 8.5px; }
+  .worker-cell { font-size: 11px; }
+  .table-header .worker-cell { font-size: 9px; letter-spacing: -.04em; }
+  .sequence-badge { width: 24px; height: 24px; font-size: 12px; }
+  .table-header .cell { font-size: 10px; }
+  .group-name-list { grid-template-columns: 1fr; }
+  .plan-foot { flex-direction: column; align-items: flex-start; gap: 3px; }
+  .export-choice-grid { grid-template-columns: 1fr; }
+  .export-choice-grid button { min-height: 74px; }
+}
+
+@media (min-width: 700px) {
+  .plan-view { padding-left: 20px; padding-right: 20px; }
+  .plan-toolbar { margin-left: -20px; margin-right: -20px; padding-left: 22px; padding-right: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="夜班计划">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-bar no-export">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M7 9.5h18M7 16h18M7 22.5h18M10 6v20M22 6v20"/></svg>
+      </div>
+      <div class="app-bar-copy">
+        <strong>夜班计划</strong>
+        <span>本地离线 · 文件不上传</span>
+      </div>
+      <button id="settingsButton" class="icon-button" type="button" aria-label="打开设置">
+        <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21h-4v-.08A1.7 1.7 0 0 0 8.96 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.52-1.04H3v-4h.08A1.7 1.7 0 0 0 4.6 8.92a1.7 1.7 0 0 0-.34-1.87L4.2 6.99l2.83-2.83.06.06a1.7 1.7 0 0 0 1.87.34A1.7 1.7 0 0 0 10 3.04V3h4v.04a1.7 1.7 0 0 0 1.04 1.52 1.7 1.7 0 0 0 1.87-.34l.06-.06 2.83 2.83-.06.06a1.7 1.7 0 0 0-.34 1.87A1.7 1.7 0 0 0 20.92 10H21v4h-.08A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+      </button>
+    </header>
+
+    <main>
+      <section id="homeView" class="view home-view">
+        <div class="hero">
+          <div class="hero-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><path d="M14 7v7M34 7v7M9 18h30M11 10h26a3 3 0 0 1 3 3v25a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V13a3 3 0 0 1 3-3Z"/><path d="m17 29 5 5 10-12"/></svg>
+          </div>
+          <h1>今日一级修计划</h1>
+          <p>选择班组和原始 .xls 文件，全部在本机读取整理。</p>
+        </div>
+
+        <div class="home-card">
+          <div class="section-heading">
+            <span class="step-number">1</span>
+            <div><strong>今日班组</strong><small>只显示本组人员供分配</small></div>
+          </div>
+          <div id="todayGroupChoices" class="group-choices" role="radiogroup" aria-label="今日班组"></div>
+        </div>
+
+        <div class="home-card">
+          <div class="section-heading">
+            <span class="step-number">2</span>
+            <div><strong>选择计划文件</strong><small>仅支持 Excel 97–2003（.xls）</small></div>
+          </div>
+          <label class="file-picker" for="xlsInput">
+            <span class="file-picker-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5M12 18v-6M9.5 14.5 12 12l2.5 2.5"/></svg>
+            </span>
+            <strong>选择今日 Excel</strong>
+            <span>点击从 iPhone“文件”中选取</span>
+          </label>
+          <input id="xlsInput" type="file" accept=".xls,application/vnd.ms-excel" hidden>
+          <div id="importProgress" class="import-progress" hidden>
+            <span class="spinner"></span><span>正在本机读取并整理计划……</span>
+          </div>
+        </div>
+
+        <button id="resumeDraftButton" class="secondary-wide" type="button" hidden>继续上次未完成的计划</button>
+
+        <div class="privacy-note">
+          <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.8 2.7 8.2 7 10 4.3-1.8 7-5.2 7-10V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span>不连接服务器，不上传工作文件。人员和偏好只保存在本机。</span>
+        </div>
+      </section>
+
+      <section id="planView" class="view plan-view" hidden>
+        <div class="plan-toolbar no-export">
+          <button id="backButton" class="text-icon-button" type="button">
+            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg><span>重新导入</span>
+          </button>
+          <div class="toolbar-actions">
+            <button id="viewModeButton" class="mode-button" type="button" aria-pressed="false">编辑模式</button>
+            <button id="autoSortButton" class="compact-button edit-only" type="button">自动排序</button>
+            <button id="undoButton" class="compact-button edit-only" type="button" disabled>
+              <svg viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M5 12h8a6 6 0 1 1 0 12"/></svg><span>撤销</span>
+            </button>
+            <button id="exportButton" class="export-button" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 16V3M7 8l5-5 5 5M5 13v7h14v-7"/></svg><span>导出</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="plan-heading">
+          <h1 id="planTitle">TONG的夜班计划</h1>
+          <p id="planSummary"></p>
+        </div>
+
+        <div class="assignment-card no-export edit-only">
+          <div class="assignment-head">
+            <div><strong id="assignmentGroupTitle">今日班组</strong><span id="assignmentHint">作业人可以留空</span></div>
+            <button id="batchModeButton" class="compact-button" type="button">批量分配</button>
+          </div>
+          <div id="batchPanel" class="batch-panel" hidden>
+            <div class="batch-status"><strong id="selectedCount">已选 0 辆</strong><button id="cancelSelectionButton" type="button">取消选择</button></div>
+            <div id="memberChips" class="member-chips"></div>
+            <button id="clearWorkersButton" class="danger-quiet" type="button">一键清空全部作业人</button>
+          </div>
+        </div>
+
+        <div class="table-shell">
+          <div id="planTableHeader" class="plan-grid table-header"></div>
+          <div id="planRows" class="plan-rows"></div>
+        </div>
+
+        <div class="plan-foot no-export">
+          <span id="planModeHint">预览模式 · 表格效果与导出一致</span>
+          <span class="edit-only">长按序号可移动，重联车辆会整组移动</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="settingsDialog" class="sheet-dialog">
+    <div class="dialog-header">
+      <div><h2>设置</h2><p>人员和界面偏好保存在本机</p></div>
+      <button class="close-button" data-close="settingsDialog" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="settings-section">
+      <div class="settings-title"><strong>班组管理</strong><span>新增、改名或调整班组</span></div>
+      <div id="groupNameList" class="group-name-list" aria-label="班组名称"></div>
+      <div id="peopleList" class="people-list"></div>
+      <form id="addPersonForm" class="add-person-form">
+        <input id="newPersonName" type="text" maxlength="12" placeholder="输入人员姓名" autocomplete="off">
+        <select id="newPersonGroup" aria-label="所属班组"></select>
+        <button type="submit">新增</button>
+      </form>
+    </div>
+    <div class="settings-section display-settings">
+      <div class="settings-title"><strong>显示方案</strong><span>页面、长图和 PDF 使用同一组显示列</span></div>
+      <div id="displayPresetList" class="preset-list" role="group" aria-label="四个显示方案"></div>
+      <fieldset class="column-options">
+        <legend>独立显示列</legend>
+        <label><span>序号</span><input type="checkbox" data-column-key="sequence"></label>
+        <label><span>无电时间</span><input type="checkbox" data-column-key="time"></label>
+        <label><span>车号</span><input type="checkbox" data-column-key="vehicle"></label>
+        <label><span>股道</span><input type="checkbox" data-column-key="track"></label>
+        <label><span>作业人</span><input type="checkbox" data-column-key="worker"></label>
+        <label><span>入所时间</span><input type="checkbox" data-column-key="entryTime"></label>
+        <label><span>洗车</span><input type="checkbox" data-column-key="manualCleaning"></label>
+      </fieldset>
+      <button id="restoreDisplayButton" class="secondary-wide restore-display" type="button">恢复默认显示</button>
+    </div>
+    <div class="dialog-footer"><button class="primary-wide" data-close="settingsDialog" type="button">完成</button></div>
+  </dialog>
+
+  <dialog id="editDialog" class="sheet-dialog edit-dialog">
+    <div class="dialog-header">
+      <div><h2 id="editDialogTitle">修改车辆</h2><p>时间、作业信息和车辆标识可随时检查</p></div>
+      <button class="close-button" data-close="editDialog" type="button" aria-label="关闭">×</button>
+    </div>
+    <form id="editItemForm">
+      <div class="edit-grid">
+        <label class="time-field"><span>无电时间</span><input id="editTime" type="time" required></label>
+        <label><span>车号</span><input id="editVehicle" type="text" inputmode="numeric" maxlength="12" required></label>
+        <label><span>三电股道</span><input id="editTrack" type="text" maxlength="12" required></label>
+        <label><span>作业人</span><select id="editWorker"></select></label>
+        <label class="time-field"><span>入所时间</span><input id="editEntryTime" type="time"></label>
+        <label><span>洗车</span><select id="editManualCleaning"><option value="false">否</option><option value="true">是</option></select></label>
+        <label class="time-field"><span>洗车开始</span><input id="editManualCleaningStartTime" type="time"></label>
+        <label class="time-field"><span>洗车结束</span><input id="editManualCleaningEndTime" type="time"></label>
+      </div>
+      <label class="full-field"><span>车辆标识</span><div id="automaticRemarkPreview" class="automatic-remark"></div></label>
+      <div class="move-actions">
+        <button id="moveUpButton" type="button">上移一位</button>
+        <button id="moveDownButton" type="button">下移一位</button>
+      </div>
+      <button id="deleteVehicleButton" class="danger-quiet" type="button">删除车辆</button>
+      <button class="primary-wide" type="submit">保存修改</button>
+    </form>
+  </dialog>
+
+  <dialog id="exportCheckDialog" class="sheet-dialog export-check-dialog">
+    <div class="dialog-header">
+      <div><h2>导出前检查</h2><p>导出永远采用预览效果，不含设置和编辑按钮</p></div>
+      <button class="close-button" data-close="exportCheckDialog" type="button" aria-label="关闭">×</button>
+    </div>
+    <div id="exportCheckSummary" class="export-check-summary"></div>
+    <div class="export-choice-grid">
+      <button id="exportImageButton" type="button"><strong>完整计划长图</strong><span>手机查看 · 保持一张长图</span></button>
+      <button id="openPdfPreviewButton" type="button"><strong>A4 PDF</strong><span>先看打印预览和预计页数</span></button>
+    </div>
+  </dialog>
+
+  <dialog id="imageExportDialog" class="export-dialog">
+    <div class="dialog-header">
+      <div><h2>完整计划长图</h2><p>图片包含当天全部车辆</p></div>
+      <button class="close-button" data-close="imageExportDialog" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="export-help">如果没有自动弹出分享，请长按下面的图片并选择“存储到照片”。</div>
+    <img id="exportPreview" alt="导出的完整夜班计划">
+    <a id="downloadImageLink" class="primary-wide link-button" download="夜班计划.png">下载图片</a>
+  </dialog>
+
+  <dialog id="pdfPreviewDialog" class="pdf-preview-dialog">
+    <div class="dialog-header">
+      <div><h2>A4 打印预览</h2><p id="pdfPreviewSummary"></p></div>
+      <button class="close-button" data-close="pdfPreviewDialog" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="pdf-preview-help">横向铺满 A4；如果超过一页会自动分页，每页都有标题、表头和页码。</div>
+    <div id="pdfPreviewPages" class="pdf-preview-pages"></div>
+    <div class="pdf-preview-footer"><button id="printPdfButton" class="primary-wide" type="button">打开打印 / 存为 PDF</button></div>
+  </dialog>
+
+  <iframe id="printFrame" title="PDF 打印内容" hidden></iframe>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>(function (root) {
+  "use strict";
+
+  const FREE_SECTOR = 0xffffffff;
+  const END_OF_CHAIN = 0xfffffffe;
+  const MAX_REGULAR_SECTOR = 0xfffffffa;
+
+  class XLSParseError extends Error {
+    constructor(message) {
+      super(message);
+      this.name = "XLSParseError";
+    }
+  }
+
+  function ensure(condition, message) {
+    if (!condition) throw new XLSParseError(message);
+  }
+
+  function asBytes(input) {
+    if (input instanceof Uint8Array) return input;
+    if (input instanceof ArrayBuffer) return new Uint8Array(input);
+    if (ArrayBuffer.isView(input)) {
+      return new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
+    }
+    throw new XLSParseError("无法读取所选文件的数据");
+  }
+
+  function u16(bytes, offset) {
+    if (offset < 0 || offset + 2 > bytes.length) return null;
+    return bytes[offset] | (bytes[offset + 1] << 8);
+  }
+
+  function u32(bytes, offset) {
+    if (offset < 0 || offset + 4 > bytes.length) return null;
+    return (
+      bytes[offset] |
+      (bytes[offset + 1] << 8) |
+      (bytes[offset + 2] << 16) |
+      (bytes[offset + 3] << 24)
+    ) >>> 0;
+  }
+
+  function u64Number(bytes, offset) {
+    const low = u32(bytes, offset);
+    const high = u32(bytes, offset + 4);
+    if (low === null || high === null) return null;
+    return low + high * 0x100000000;
+  }
+
+  function f64(bytes, offset) {
+    if (offset < 0 || offset + 8 > bytes.length) return null;
+    return new DataView(bytes.buffer, bytes.byteOffset + offset, 8).getFloat64(0, true);
+  }
+
+  function bytesSlice(bytes, start, end) {
+    return bytes.slice(start, end);
+  }
+
+  function decodeUTF16Units(units) {
+    let result = "";
+    const chunk = 8192;
+    for (let index = 0; index < units.length; index += chunk) {
+      result += String.fromCharCode.apply(null, units.slice(index, index + chunk));
+    }
+    return result;
+  }
+
+  class CompoundFile {
+    constructor(input) {
+      const bytes = asBytes(input);
+      const signature = [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1];
+      ensure(bytes.length >= 512, "所选文件不是有效的 Excel 97–2003（.xls）文件");
+      ensure(signature.every((value, index) => bytes[index] === value), "所选文件不是有效的 Excel 97–2003（.xls）文件");
+      ensure(u16(bytes, 28) === 0xfffe, ".xls文件头不完整");
+
+      const sectorShift = u16(bytes, 30);
+      const miniSectorShift = u16(bytes, 32);
+      const numberOfFATSectors = u32(bytes, 44);
+      const firstDirectorySector = u32(bytes, 48);
+      const cutoff = u32(bytes, 56);
+      const firstMiniFATSector = u32(bytes, 60);
+      const numberOfMiniFATSectors = u32(bytes, 64);
+      const firstDIFATSector = u32(bytes, 68);
+      const numberOfDIFATSectors = u32(bytes, 72);
+      ensure(
+        [sectorShift, miniSectorShift, numberOfFATSectors, firstDirectorySector, cutoff,
+          firstMiniFATSector, numberOfMiniFATSectors, firstDIFATSector, numberOfDIFATSectors]
+          .every((value) => value !== null),
+        ".xls文件头不完整"
+      );
+
+      const sectorSize = 1 << sectorShift;
+      const miniSectorSize = 1 << miniSectorShift;
+      ensure((sectorSize === 512 || sectorSize === 4096) && miniSectorSize === 64, "该.xls文件使用了不支持的存储格式");
+
+      const sectorBytes = (sector) => {
+        ensure(sector < MAX_REGULAR_SECTOR, ".xls文件包含无效的数据扇区");
+        const start = (sector + 1) * sectorSize;
+        ensure(start >= 0 && start + sectorSize <= bytes.length, ".xls文件的数据扇区超出文件范围");
+        return bytesSlice(bytes, start, start + sectorSize);
+      };
+
+      let fatSectorIDs = [];
+      for (let index = 0; index < 109; index += 1) {
+        const value = u32(bytes, 76 + index * 4);
+        if (value !== null && value < MAX_REGULAR_SECTOR) fatSectorIDs.push(value);
+      }
+
+      let nextDIFATSector = firstDIFATSector;
+      if (numberOfDIFATSectors > 0) {
+        for (let step = 0; step < numberOfDIFATSectors; step += 1) {
+          if (nextDIFATSector >= MAX_REGULAR_SECTOR) break;
+          const difatSector = sectorBytes(nextDIFATSector);
+          const entryCount = sectorSize / 4 - 1;
+          for (let index = 0; index < entryCount; index += 1) {
+            const value = u32(difatSector, index * 4);
+            if (value !== null && value < MAX_REGULAR_SECTOR) fatSectorIDs.push(value);
+          }
+          nextDIFATSector = u32(difatSector, entryCount * 4) ?? END_OF_CHAIN;
+        }
+      }
+      fatSectorIDs = fatSectorIDs.slice(0, numberOfFATSectors);
+      ensure(fatSectorIDs.length > 0, ".xls文件缺少分配表");
+
+      const fat = [];
+      fatSectorIDs.forEach((sectorID) => {
+        const sector = sectorBytes(sectorID);
+        for (let offset = 0; offset + 4 <= sector.length; offset += 4) {
+          fat.push(u32(sector, offset));
+        }
+      });
+
+      const regularChain = (startingSector, chainError, rangeError) => {
+        if (startingSector >= MAX_REGULAR_SECTOR) return new Uint8Array();
+        const chunks = [];
+        let total = 0;
+        const visited = new Set();
+        let sector = startingSector;
+        const maximumSteps = Math.max(1, Math.floor(bytes.length / sectorSize) + 1);
+        while (sector < MAX_REGULAR_SECTOR) {
+          ensure(sector < fat.length && !visited.has(sector) && visited.size < maximumSteps, chainError);
+          visited.add(sector);
+          const start = (sector + 1) * sectorSize;
+          ensure(start >= 0 && start + sectorSize <= bytes.length, rangeError);
+          const chunk = bytesSlice(bytes, start, start + sectorSize);
+          chunks.push(chunk);
+          total += chunk.length;
+          sector = fat[sector];
+        }
+        ensure(sector === END_OF_CHAIN || sector === FREE_SECTOR, chainError);
+        const result = new Uint8Array(total);
+        let cursor = 0;
+        chunks.forEach((chunk) => {
+          result.set(chunk, cursor);
+          cursor += chunk.length;
+        });
+        return result;
+      };
+
+      const directoryBytes = regularChain(
+        firstDirectorySector,
+        ".xls文件的数据链损坏",
+        ".xls文件的数据扇区超出文件范围"
+      );
+      const directoryEntries = [];
+      for (let offset = 0; offset + 128 <= directoryBytes.length; offset += 128) {
+        const entry = bytesSlice(directoryBytes, offset, offset + 128);
+        const rawNameLength = u16(entry, 64);
+        if (rawNameLength === null || rawNameLength < 2) continue;
+        const nameByteCount = Math.min(rawNameLength - 2, 64);
+        const units = [];
+        for (let nameOffset = 0; nameOffset + 2 <= nameByteCount; nameOffset += 2) {
+          units.push(u16(entry, nameOffset));
+        }
+        const startingSector = u32(entry, 116);
+        const streamSize = u64Number(entry, 120);
+        if (startingSector === null || streamSize === null) continue;
+        directoryEntries.push({
+          name: decodeUTF16Units(units),
+          objectType: entry[66],
+          startingSector,
+          streamSize
+        });
+      }
+
+      const miniFAT = [];
+      if (numberOfMiniFATSectors > 0 && firstMiniFATSector < MAX_REGULAR_SECTOR) {
+        const miniFATBytes = regularChain(
+          firstMiniFATSector,
+          ".xls文件的数据链损坏",
+          ".xls文件的数据扇区超出文件范围"
+        );
+        const requiredBytes = Math.min(miniFATBytes.length, numberOfMiniFATSectors * sectorSize);
+        for (let offset = 0; offset + 4 <= requiredBytes; offset += 4) {
+          miniFAT.push(u32(miniFATBytes, offset));
+        }
+      }
+
+      const rootEntry = directoryEntries.find((entry) => entry.objectType === 5);
+      let rootMiniStream = new Uint8Array();
+      if (rootEntry && rootEntry.startingSector < MAX_REGULAR_SECTOR) {
+        rootMiniStream = regularChain(
+          rootEntry.startingSector,
+          ".xls文件的数据链损坏",
+          ".xls文件的数据扇区超出文件范围"
+        ).slice(0, rootEntry.streamSize);
+      }
+
+      this.bytes = bytes;
+      this.sectorSize = sectorSize;
+      this.miniSectorSize = miniSectorSize;
+      this.miniStreamCutoff = cutoff;
+      this.fat = fat;
+      this.miniFAT = miniFAT;
+      this.directoryEntries = directoryEntries;
+      this.rootMiniStream = rootMiniStream;
+      this._regularChain = regularChain;
+    }
+
+    stream(names) {
+      const entry = this.directoryEntries.find(
+        (candidate) => candidate.objectType === 2 && names.includes(candidate.name)
+      );
+      ensure(entry, ".xls文件中没有找到工作簿数据");
+      const size = Math.max(0, Math.min(entry.streamSize, Number.MAX_SAFE_INTEGER));
+      if (size < this.miniStreamCutoff) {
+        return this.readMiniChain(entry.startingSector, size);
+      }
+      return this._regularChain(
+        entry.startingSector,
+        ".xls工作簿数据链损坏",
+        ".xls工作簿数据超出文件范围"
+      ).slice(0, size);
+    }
+
+    readMiniChain(startingSector, size) {
+      if (startingSector >= MAX_REGULAR_SECTOR) return new Uint8Array();
+      const result = new Uint8Array(size);
+      let written = 0;
+      let sector = startingSector;
+      const visited = new Set();
+      while (sector < MAX_REGULAR_SECTOR && written < size) {
+        ensure(sector < this.miniFAT.length && !visited.has(sector), ".xls迷你数据链损坏");
+        visited.add(sector);
+        const start = sector * this.miniSectorSize;
+        ensure(start >= 0 && start + this.miniSectorSize <= this.rootMiniStream.length, ".xls迷你数据超出文件范围");
+        const count = Math.min(this.miniSectorSize, size - written);
+        result.set(this.rootMiniStream.slice(start, start + count), written);
+        written += count;
+        sector = this.miniFAT[sector];
+      }
+      return result.slice(0, written);
+    }
+  }
+
+  class SegmentCursor {
+    constructor(segments) {
+      this.segments = segments;
+      this.segmentIndex = 0;
+      this.offset = 0;
+    }
+
+    readByteRaw() {
+      while (
+        this.segmentIndex < this.segments.length &&
+        this.offset >= this.segments[this.segmentIndex].length
+      ) {
+        this.segmentIndex += 1;
+        this.offset = 0;
+      }
+      ensure(this.segmentIndex < this.segments.length, ".xls共享文字表不完整");
+      const value = this.segments[this.segmentIndex][this.offset];
+      this.offset += 1;
+      return value;
+    }
+
+    readUInt16Raw() {
+      return this.readByteRaw() | (this.readByteRaw() << 8);
+    }
+
+    readUInt32Raw() {
+      return (
+        this.readByteRaw() |
+        (this.readByteRaw() << 8) |
+        (this.readByteRaw() << 16) |
+        (this.readByteRaw() << 24)
+      ) >>> 0;
+    }
+
+    prepareForCharacter(state) {
+      const required = state.usesTwoBytes ? 2 : 1;
+      ensure(this.segmentIndex < this.segments.length, ".xls共享文字被截断");
+      if (this.offset + required <= this.segments[this.segmentIndex].length) return;
+      ensure(this.offset === this.segments[this.segmentIndex].length, ".xls共享文字在字符中间断开");
+      this.segmentIndex += 1;
+      this.offset = 0;
+      ensure(this.segmentIndex < this.segments.length && this.segments[this.segmentIndex].length > 0, ".xls共享文字续记录缺失");
+      const continuationOptions = this.segments[this.segmentIndex][this.offset];
+      this.offset += 1;
+      state.usesTwoBytes = (continuationOptions & 0x01) !== 0;
+    }
+
+    skipRaw(count) {
+      for (let index = 0; index < count; index += 1) this.readByteRaw();
+    }
+
+    readRichUnicodeString() {
+      const characterCount = this.readUInt16Raw();
+      const options = this.readByteRaw();
+      const state = { usesTwoBytes: (options & 0x01) !== 0 };
+      const hasExtendedData = (options & 0x04) !== 0;
+      const hasRichText = (options & 0x08) !== 0;
+      const runCount = hasRichText ? this.readUInt16Raw() : 0;
+      const extendedSize = hasExtendedData ? this.readUInt32Raw() : 0;
+      const units = [];
+      for (let index = 0; index < characterCount; index += 1) {
+        this.prepareForCharacter(state);
+        if (state.usesTwoBytes) {
+          const segment = this.segments[this.segmentIndex];
+          units.push(segment[this.offset] | (segment[this.offset + 1] << 8));
+          this.offset += 2;
+        } else {
+          units.push(this.segments[this.segmentIndex][this.offset]);
+          this.offset += 1;
+        }
+      }
+      this.skipRaw(runCount * 4 + extendedSize);
+      return decodeUTF16Units(units);
+    }
+  }
+
+  function decodeSharedStrings(segments) {
+    const cursor = new SegmentCursor(segments);
+    cursor.readUInt32Raw();
+    const uniqueCount = cursor.readUInt32Raw();
+    ensure(uniqueCount <= 1000000, ".xls共享文字数量异常");
+    const strings = [];
+    for (let index = 0; index < uniqueCount; index += 1) {
+      strings.push(cursor.readRichUnicodeString());
+    }
+    return strings;
+  }
+
+  function decodeInlineUnicodeString(bytes, offset) {
+    const count = u16(bytes, offset);
+    ensure(count !== null && offset + 3 <= bytes.length, ".xls文字单元格不完整");
+    const options = bytes[offset + 2];
+    const usesTwoBytes = (options & 0x01) !== 0;
+    const start = offset + 3;
+    const units = [];
+    for (let index = 0; index < count; index += 1) {
+      if (usesTwoBytes) {
+        const unit = u16(bytes, start + index * 2);
+        ensure(unit !== null, ".xls文字单元格被截断");
+        units.push(unit);
+      } else {
+        ensure(start + index < bytes.length, ".xls文字单元格被截断");
+        units.push(bytes[start + index]);
+      }
+    }
+    return decodeUTF16Units(units);
+  }
+
+  function decodeRK(encoded) {
+    let value;
+    if ((encoded & 0x02) !== 0) {
+      value = encoded >> 2;
+    } else {
+      const buffer = new ArrayBuffer(8);
+      const view = new DataView(buffer);
+      view.setUint32(0, 0, true);
+      view.setUint32(4, encoded & 0xfffffffc, true);
+      value = view.getFloat64(0, true);
+    }
+    return (encoded & 0x01) !== 0 ? value / 100 : value;
+  }
+
+  function decimalString(value) {
+    if (Number.isInteger(value) && Math.abs(value) <= Number.MAX_SAFE_INTEGER) return String(value);
+    return Number(value).toPrecision(15).replace(/(?:\.0+|(?:(\.\d*?)0+))(?=e|$)/, "$1");
+  }
+
+  function splitRecords(bytes) {
+    const records = [];
+    let offset = 0;
+    while (offset + 4 <= bytes.length) {
+      const type = u16(bytes, offset);
+      const length = u16(bytes, offset + 2);
+      if (type === null || length === null) break;
+      const payloadStart = offset + 4;
+      ensure(payloadStart + length <= bytes.length, ".xls工作簿记录不完整");
+      records.push({ type, payload: bytesSlice(bytes, payloadStart, payloadStart + length) });
+      offset = payloadStart + length;
+    }
+    ensure(records.some((record) => record.type === 0x0809), "该.xls文件不是支持的BIFF8工作簿");
+    return records;
+  }
+
+  function readBIFFWorksheet(bytes) {
+    const records = splitRecords(bytes);
+    let sharedStrings = [];
+    let uses1904DateSystem = false;
+    for (let index = 0; index < records.length; index += 1) {
+      const record = records[index];
+      if (record.type === 0x00fc) {
+        const segments = [record.payload];
+        let continuation = index + 1;
+        while (continuation < records.length && records[continuation].type === 0x003c) {
+          segments.push(records[continuation].payload);
+          continuation += 1;
+        }
+        sharedStrings = decodeSharedStrings(segments);
+        index = continuation - 1;
+      } else if (record.type === 0x0022) {
+        uses1904DateSystem = u16(record.payload, 0) === 1;
+      }
+    }
+    ensure(sharedStrings.length > 0, ".xls工作簿缺少共享文字表");
+
+    const cells = new Map();
+    const mergedRanges = [];
+    const key = (row, column) => `${row},${column}`;
+
+    records.forEach((record) => {
+      const payload = record.payload;
+      if (record.type === 0x00fd && payload.length >= 10) {
+        const row = u16(payload, 0);
+        const column = u16(payload, 2);
+        const stringIndex = u32(payload, 6);
+        if (row !== null && column !== null && stringIndex < sharedStrings.length) {
+          cells.set(key(row, column), sharedStrings[stringIndex]);
+        }
+      } else if (record.type === 0x0204 && payload.length >= 9) {
+        const row = u16(payload, 0);
+        const column = u16(payload, 2);
+        if (row !== null && column !== null) {
+          try {
+            cells.set(key(row, column), decodeInlineUnicodeString(payload, 6));
+          } catch (_) {
+            // 与原版本一致：单个损坏的内联文字不阻断整份表。
+          }
+        }
+      } else if (record.type === 0x0203) {
+        const row = u16(payload, 0);
+        const column = u16(payload, 2);
+        const value = f64(payload, 6);
+        if (row !== null && column !== null && value !== null) {
+          cells.set(key(row, column), decimalString(value));
+        }
+      } else if (record.type === 0x027e) {
+        const row = u16(payload, 0);
+        const column = u16(payload, 2);
+        const encoded = u32(payload, 6);
+        if (row !== null && column !== null && encoded !== null) {
+          cells.set(key(row, column), decimalString(decodeRK(encoded)));
+        }
+      } else if (record.type === 0x00bd && payload.length >= 12) {
+        const row = u16(payload, 0);
+        const firstColumn = u16(payload, 2);
+        const count = Math.floor((payload.length - 6) / 6);
+        if (row !== null && firstColumn !== null) {
+          for (let item = 0; item < count; item += 1) {
+            const encoded = u32(payload, 6 + item * 6);
+            if (encoded !== null) cells.set(key(row, firstColumn + item), decimalString(decodeRK(encoded)));
+          }
+        }
+      } else if (record.type === 0x0006 && payload.length >= 14) {
+        const row = u16(payload, 0);
+        const column = u16(payload, 2);
+        if (row !== null && column !== null && (payload[12] !== 0xff || payload[13] !== 0xff)) {
+          const value = f64(payload, 6);
+          if (value !== null) cells.set(key(row, column), decimalString(value));
+        }
+      } else if (record.type === 0x00e5) {
+        const count = u16(payload, 0);
+        if (count === null) return;
+        for (let item = 0; item < count; item += 1) {
+          const offset = 2 + item * 8;
+          const firstRow = u16(payload, offset);
+          const lastRow = u16(payload, offset + 2);
+          const firstColumn = u16(payload, offset + 4);
+          const lastColumn = u16(payload, offset + 6);
+          if ([firstRow, lastRow, firstColumn, lastColumn].every((value) => value !== null)) {
+            mergedRanges.push({ firstRow, lastRow, firstColumn, lastColumn });
+          }
+        }
+      }
+    });
+
+    ensure(cells.size > 0, ".xls工作表中没有可读取的单元格");
+    const cellEntries = Array.from(cells.entries()).map(([rawKey, value]) => {
+      const [row, column] = rawKey.split(",").map(Number);
+      return { row, column, value };
+    });
+    const maximumRow = Math.max(
+      0,
+      ...cellEntries.map((cell) => cell.row),
+      ...mergedRanges.map((range) => range.lastRow)
+    );
+
+    return {
+      cells,
+      cellEntries,
+      mergedRanges,
+      uses1904DateSystem,
+      maximumRow,
+      mergedRange(row, column) {
+        return mergedRanges.find(
+          (range) => range.firstRow <= row && row <= range.lastRow &&
+            range.firstColumn <= column && column <= range.lastColumn
+        ) || null;
+      },
+      value(row, column) {
+        const direct = cells.get(key(row, column));
+        if (direct !== undefined) return direct;
+        const range = this.mergedRange(row, column);
+        if (!range) return "";
+        return cells.get(key(range.firstRow, range.firstColumn)) || "";
+      }
+    };
+  }
+
+  function readWorksheet(input) {
+    const compound = new CompoundFile(input);
+    return readBIFFWorksheet(compound.stream(["Workbook", "Book"]));
+  }
+
+  const api = { XLSParseError, readWorksheet };
+  root.OfflineXLS = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
+  <script>(function (root) {
+  "use strict";
+
+  const XLS = root.OfflineXLS || (typeof require === "function" ? require("./xls-parser.js") : null);
+
+  function compact(value) {
+    return String(value ?? "")
+      .trim()
+      .replace(/[－—–]/g, "-")
+      .replace(/\s/g, "")
+      .toUpperCase();
+  }
+
+  function displayVehicleNumber(fullNumber) {
+    const match = compact(fullNumber).match(/([0-9]{4})(?!.*[0-9])/);
+    return match ? match[1] : null;
+  }
+
+  function normalizedTrack(value) {
+    return compact(value);
+  }
+
+  function validOutboundTrain(value) {
+    const normalized = compact(value).replace(/\\/g, "/");
+    const invalid = new Set(["", "/", "-", "--", "库停", "库停.", "库停。", "无"]);
+    return invalid.has(normalized) ? null : normalized;
+  }
+
+  function integers(value) {
+    return (String(value ?? "").match(/\d+/g) || []).map(Number);
+  }
+
+  function localTimestamp(year, month, day, hour = 0, minute = 0, second = 0) {
+    const date = new Date(year, month - 1, day, hour, minute, second, 0);
+    if (
+      date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day ||
+      date.getHours() !== hour || date.getMinutes() !== minute
+    ) return null;
+    return date.getTime();
+  }
+
+  function excelSerialTimestamp(serial, uses1904DateSystem) {
+    const base = uses1904DateSystem
+      ? localTimestamp(1904, 1, 1)
+      : localTimestamp(1899, 12, 30);
+    return base === null ? null : base + serial * 86400000;
+  }
+
+  function parseDateTime(value, planDate, uses1904DateSystem) {
+    const trimmed = String(value ?? "").trim();
+    const serial = Number(trimmed);
+    if (trimmed !== "" && Number.isFinite(serial) && serial > 1 && serial < 200000) {
+      return excelSerialTimestamp(serial, uses1904DateSystem);
+    }
+
+    const numbers = integers(value);
+    if (numbers.length >= 5 && numbers[0] >= 2000 && numbers[0] <= 2100) {
+      return localTimestamp(
+        numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5] || 0
+      );
+    }
+    if (numbers.length >= 2 && planDate) {
+      return localTimestamp(planDate.year, planDate.month, planDate.day, numbers[0], numbers[1], 0);
+    }
+    return null;
+  }
+
+  function inferPlanDate(sheet) {
+    const ordered = [...sheet.cellEntries].sort(
+      (left, right) => left.row - right.row || left.column - right.column
+    );
+    for (const cell of ordered) {
+      const values = integers(cell.value);
+      if (
+        values.length >= 3 && values[0] >= 2000 && values[0] <= 2100 &&
+        values[1] >= 1 && values[1] <= 12 && values[2] >= 1 && values[2] <= 31
+      ) {
+        return { year: values[0], month: values[1], day: values[2] };
+      }
+    }
+    return null;
+  }
+
+  function locateColumns(sheet) {
+    const headers = {
+      车组: "vehicle",
+      检修股道: "track",
+      检修任务: "repairTask",
+      检修单位: "repairUnit",
+      作业项目: "workItem",
+      开始时间: "startTime",
+      结束时间: "endTime",
+      出所车次: "outboundTrain",
+      入所时间: "entryTime",
+      入库时间: "entryTime",
+      到所时间: "entryTime",
+      入所开始时间: "entryStartTime",
+      入所结束时间: "entryEndTime"
+    };
+    const requiredFields = ["vehicle", "track", "repairTask", "repairUnit", "workItem", "startTime", "outboundTrain"];
+    const rows = [...new Set(sheet.cellEntries.map((cell) => cell.row))].sort((a, b) => a - b);
+    for (const row of rows) {
+      const located = { headerRow: row };
+      sheet.cellEntries.filter((cell) => cell.row === row).forEach((cell) => {
+        const field = headers[compact(cell.value)];
+        if (field) located[field] = cell.column;
+      });
+      if (requiredFields.every((field) => Number.isInteger(located[field]))) return located;
+    }
+    throw new Error("计划表列标题不完整，无法确认车组、无电时间和三电股道的位置");
+  }
+
+  function isVehicleNumber(value) {
+    const normalized = compact(value);
+    return (normalized.includes("CRH") || normalized.includes("CR400")) &&
+      displayVehicleNumber(value) !== null;
+  }
+
+  function uniqueValues(rows, matching, value) {
+    const result = [];
+    const seen = new Set();
+    for (let row = rows.first; row <= rows.last; row += 1) {
+      if (!matching(row)) continue;
+      const candidate = String(value(row) ?? "").trim();
+      if (!candidate) continue;
+      const key = compact(candidate);
+      if (!seen.has(key)) {
+        seen.add(key);
+        result.push(candidate);
+      }
+    }
+    return result;
+  }
+
+  function uniqueNumbers(values) {
+    const seen = new Set();
+    return values.filter((value) => {
+      if (value === null || seen.has(value)) return false;
+      seen.add(value);
+      return true;
+    });
+  }
+
+  function normalizeRangeEnd(startMs, endMs) {
+    if (startMs === null || endMs === null) return endMs;
+    let normalized = endMs;
+    while (normalized < startMs) normalized += 86400000;
+    return normalized;
+  }
+
+  function timeRangeFromText(value, planDate) {
+    const matches = [...String(value ?? "").matchAll(/(\d{1,2}):(\d{2})(?::\d{2})?/g)];
+    if (matches.length < 2 || !planDate) return null;
+    const startMs = localTimestamp(planDate.year, planDate.month, planDate.day, Number(matches[0][1]), Number(matches[0][2]));
+    const rawEnd = localTimestamp(planDate.year, planDate.month, planDate.day, Number(matches[1][1]), Number(matches[1][2]));
+    if (startMs === null || rawEnd === null) return null;
+    return { startMs, endMs: normalizeRangeEnd(startMs, rawEnd) };
+  }
+
+  function rowTimeRange(sheet, matchingRows, columns, planDate) {
+    const startValues = matchingRows.map((row) => sheet.value(row, columns.startTime));
+    const endValues = Number.isInteger(columns.endTime)
+      ? matchingRows.map((row) => sheet.value(row, columns.endTime))
+      : [];
+    const startMs = uniqueNumbers(startValues.map((value) => parseDateTime(value, planDate, sheet.uses1904DateSystem)))[0] ?? null;
+    const rawEnd = uniqueNumbers(endValues.map((value) => parseDateTime(value, planDate, sheet.uses1904DateSystem)))[0] ?? null;
+    return { startMs, endMs: normalizeRangeEnd(startMs, rawEnd) };
+  }
+
+  function hasElectricalWheelSetting(sheet, rows, columns) {
+    const checked = new Set();
+    for (let row = rows.first; row <= rows.last; row += 1) {
+      const task = compact(sheet.value(row, columns.repairTask));
+      if (!task.includes("轮径设定")) continue;
+      const merged = sheet.mergedRange(row, columns.repairTask);
+      const first = Math.max(rows.first, merged ? merged.firstRow : row);
+      const last = Math.min(rows.last, merged ? merged.lastRow : row);
+      const spanKey = `${first}-${last}`;
+      if (checked.has(spanKey)) continue;
+      checked.add(spanKey);
+      for (let unitRow = first; unitRow <= last; unitRow += 1) {
+        if (compact(sheet.value(unitRow, columns.repairUnit)).includes("电务")) return true;
+      }
+    }
+    return false;
+  }
+
+  function makeID() {
+    if (root.crypto && typeof root.crypto.randomUUID === "function") return root.crypto.randomUUID();
+    return `id-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  function parseCandidates(input) {
+    const sheet = XLS.readWorksheet(input);
+    const columns = locateColumns(sheet);
+    const planDate = inferPlanDate(sheet);
+    const vehicleRows = sheet.cellEntries
+      .filter(
+        (cell) => cell.column === columns.vehicle && cell.row > columns.headerRow && isVehicleNumber(cell.value)
+      )
+      .map((cell) => cell.row)
+      .sort((a, b) => a - b);
+    if (vehicleRows.length === 0) throw new Error("计划表中没有找到完整动车组车号");
+
+    const candidates = [];
+    vehicleRows.forEach((startRow, index) => {
+      const endRow = index + 1 < vehicleRows.length ? vehicleRows[index + 1] - 1 : sheet.maximumRow;
+      const rows = { first: startRow, last: endRow };
+      const tasks = [];
+      for (let row = startRow; row <= endRow; row += 1) {
+        tasks.push(compact(sheet.value(row, columns.repairTask)));
+        tasks.push(compact(sheet.value(row, columns.workItem)));
+      }
+      if (!tasks.some((task) => task.includes("一级修"))) return;
+
+      const issues = [];
+      const noPowerValues = uniqueValues(
+        rows,
+        (row) => compact(sheet.value(row, columns.workItem)).includes("无电作业"),
+        (row) => sheet.value(row, columns.startTime)
+      );
+      const uniqueTimes = uniqueNumbers(
+        noPowerValues.map((value) => parseDateTime(value, planDate, sheet.uses1904DateSystem))
+      );
+      if (noPowerValues.length > 1 && uniqueTimes.length > 1) {
+        issues.push("原表中发现多个不同的无电作业开始时间，请确认");
+      } else if (noPowerValues.length > 0 && uniqueTimes.length === 0) {
+        issues.push("无电作业开始时间格式无法读取，请确认");
+      } else if (uniqueTimes.length === 0) {
+        issues.push("一级修车辆缺少无电作业开始时间");
+      }
+
+      const threePowerTracks = uniqueValues(
+        rows,
+        (row) => compact(sheet.value(row, columns.workItem)).includes("三电作业"),
+        (row) => normalizedTrack(sheet.value(row, columns.track))
+      );
+      if (threePowerTracks.length > 1) {
+        issues.push("原表中发现多个不同的三电作业股道，请确认");
+      } else if (threePowerTracks.length === 0) {
+        issues.push("缺少三电作业股道");
+      }
+
+      const fullVehicleNumber = sheet.value(startRow, columns.vehicle);
+      const vehicleNumber = displayVehicleNumber(fullVehicleNumber);
+      if (!vehicleNumber) issues.push("无法可靠提取车号最后4位");
+
+      const entryRows = [];
+      for (let row = rows.first; row <= rows.last; row += 1) {
+        if (compact(sheet.value(row, columns.workItem)).includes("入所")) entryRows.push(row);
+      }
+      let entryRange = rowTimeRange(sheet, entryRows, columns, planDate);
+      if (Number.isInteger(columns.entryStartTime)) {
+        const directStart = parseDateTime(sheet.value(startRow, columns.entryStartTime), planDate, sheet.uses1904DateSystem);
+        const directEnd = Number.isInteger(columns.entryEndTime)
+          ? parseDateTime(sheet.value(startRow, columns.entryEndTime), planDate, sheet.uses1904DateSystem)
+          : null;
+        if (directStart !== null) entryRange = { startMs: directStart, endMs: normalizeRangeEnd(directStart, directEnd) };
+      } else if (Number.isInteger(columns.entryTime)) {
+        const entryRawValues = uniqueValues(rows, () => true, (row) => sheet.value(row, columns.entryTime));
+        const textRange = entryRawValues.map((value) => timeRangeFromText(value, planDate)).find(Boolean);
+        if (textRange) entryRange = textRange;
+        else if (entryRawValues.length) {
+          const directStart = parseDateTime(entryRawValues[0], planDate, sheet.uses1904DateSystem);
+          if (directStart !== null) entryRange.startMs = directStart;
+        }
+      }
+      if ((entryRange.startMs !== null || entryRange.endMs !== null) && (entryRange.startMs === null || entryRange.endMs === null)) {
+        issues.push("入所时间缺少开始或结束时间，请确认");
+      }
+
+      const manualCleaningRows = [];
+      for (let row = rows.first; row <= rows.last; row += 1) {
+        const taskText = `${compact(sheet.value(row, columns.repairTask))}${compact(sheet.value(row, columns.workItem))}`;
+        if (taskText.includes("人工清洗") || taskText.includes("人工洗")) manualCleaningRows.push(row);
+      }
+      const manualCleaningRange = rowTimeRange(sheet, manualCleaningRows, columns, planDate);
+      if (manualCleaningRows.length && (manualCleaningRange.startMs === null || manualCleaningRange.endMs === null)) {
+        issues.push("洗车缺少开始或结束时间，请确认");
+      }
+
+      candidates.push({
+        id: makeID(),
+        fullVehicleNumber,
+        vehicleNumber: vehicleNumber || "",
+        startMs: uniqueTimes[0] ?? null,
+        entryStartMs: entryRange.startMs,
+        entryEndMs: entryRange.endMs,
+        manualCleaning: manualCleaningRows.length > 0,
+        manualCleaningStartMs: manualCleaningRange.startMs,
+        manualCleaningEndMs: manualCleaningRange.endMs,
+        track: threePowerTracks[0] || "",
+        outboundTrain: sheet.value(startRow, columns.outboundTrain),
+        wheelSetting: hasElectricalWheelSetting(sheet, rows, columns),
+        originalOrder: index,
+        sourceRows: `${startRow + 1}:${endRow + 1}`,
+        issues
+      });
+    });
+
+    return { candidates, planDate };
+  }
+
+  function pairedTrackParts(track) {
+    const match = normalizedTrack(track).match(/^(\d+)-([12])$/);
+    return match ? { base: match[1], suffix: Number(match[2]) } : null;
+  }
+
+  function orderSameTimeGroup(records) {
+    const stable = [...records].sort((a, b) => a.originalOrder - b.originalOrder);
+    const parts = stable.map((record) => ({ record, parts: pairedTrackParts(record.track) }));
+    const baseOrder = [];
+    parts.forEach(({ parts: value }) => {
+      if (value && !baseOrder.includes(value.base)) baseOrder.push(value.base);
+    });
+    const pairableBases = baseOrder.filter((base) => {
+      const suffixes = new Set(parts.filter((item) => item.parts && item.parts.base === base).map((item) => item.parts.suffix));
+      return suffixes.has(1) && suffixes.has(2);
+    });
+
+    const result = [];
+    const emitted = new Set();
+    pairableBases.forEach((base) => {
+      const minusTwo = parts.filter((item) => item.parts && item.parts.base === base && item.parts.suffix === 2).map((item) => item.record);
+      const minusOne = parts.filter((item) => item.parts && item.parts.base === base && item.parts.suffix === 1).map((item) => item.record);
+      const pairCount = Math.min(minusTwo.length, minusOne.length);
+      for (let index = 0; index < pairCount; index += 1) {
+        result.push(minusTwo[index], minusOne[index]);
+        emitted.add(minusTwo[index].id);
+        emitted.add(minusOne[index].id);
+      }
+    });
+
+    const remaining = stable.filter((record) => !emitted.has(record.id));
+    const coupledOrder = [];
+    remaining.forEach((record) => {
+      if (record.coupledTrain && !coupledOrder.includes(record.coupledTrain)) coupledOrder.push(record.coupledTrain);
+    });
+    coupledOrder.forEach((train) => {
+      const matching = remaining.filter((record) => record.coupledTrain === train && !emitted.has(record.id));
+      if (matching.length >= 2) {
+        matching.forEach((record) => {
+          result.push(record);
+          emitted.add(record.id);
+        });
+      }
+    });
+    result.push(...stable.filter((record) => !emitted.has(record.id)));
+    return result;
+  }
+
+  function buildPlan(candidates) {
+    const records = candidates.map((candidate) => ({ ...candidate }));
+    const groupedTrains = new Map();
+    records.forEach((record) => {
+      const train = validOutboundTrain(record.outboundTrain);
+      if (!train) return;
+      if (!groupedTrains.has(train)) groupedTrains.set(train, []);
+      groupedTrains.get(train).push(record);
+    });
+    groupedTrains.forEach((matching, train) => {
+      if (matching.length >= 2) matching.forEach((record) => { record.coupledTrain = train; });
+    });
+
+    const byTime = new Map();
+    records.forEach((record) => {
+      const key = record.startMs === null ? "missing" : String(record.startMs);
+      if (!byTime.has(key)) byTime.set(key, []);
+      byTime.get(key).push(record);
+    });
+    const timeKeys = [...byTime.keys()].sort((left, right) => {
+      if (left === "missing") return 1;
+      if (right === "missing") return -1;
+      return Number(left) - Number(right);
+    });
+    const ordered = [];
+    timeKeys.forEach((time) => ordered.push(...orderSameTimeGroup(byTime.get(time))));
+
+    return ordered.map((record, index) => ({
+      ...record,
+      sequence: index + 1,
+      workerId: null,
+      customRemark: ""
+    }));
+  }
+
+  function autoSortItems(items) {
+    const records = items.map((item, index) => ({ ...item, originalOrder: index }));
+    const byTime = new Map();
+    records.forEach((record) => {
+      const key = record.startMs === null ? "missing" : String(record.startMs);
+      if (!byTime.has(key)) byTime.set(key, []);
+      byTime.get(key).push(record);
+    });
+    const timeKeys = [...byTime.keys()].sort((left, right) => {
+      if (left === "missing") return 1;
+      if (right === "missing") return -1;
+      return Number(left) - Number(right);
+    });
+    const result = [];
+    timeKeys.forEach((time) => result.push(...orderSameTimeGroup(byTime.get(time))));
+    return result.map((item, index) => ({ ...item, sequence: index + 1 }));
+  }
+
+  function planFromXLS(input, fileName = "") {
+    const parsed = parseCandidates(input);
+    const items = buildPlan(parsed.candidates);
+    return {
+      fileName,
+      planDate: parsed.planDate,
+      title: titleFromFileName(fileName, parsed.planDate),
+      items,
+      warningCount: items.reduce((total, item) => total + item.issues.length, 0)
+    };
+  }
+
+  function titleFromFileName(fileName, fallbackDate) {
+    const match = String(fileName ?? "").match(/(?:19|20)\d{2}[-._年](\d{1,2})[-._月](\d{1,2})日?/);
+    let month = match ? Number(match[1]) : fallbackDate && fallbackDate.month;
+    let day = match ? Number(match[2]) : fallbackDate && fallbackDate.day;
+    if (!(month >= 1 && month <= 12 && day >= 1 && day <= 31)) return "TONG的夜班计划";
+    return `${month}.${day} TONG的夜班计划`;
+  }
+
+  function formatTime(timestamp) {
+    if (timestamp === null || !Number.isFinite(timestamp)) return "";
+    const date = new Date(timestamp);
+    return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  }
+
+  function rowsAreConnected(items, index) {
+    const current = items[index];
+    const next = items[index + 1];
+    return Boolean(current && next && current.coupledTrain && current.coupledTrain === next.coupledTrain);
+  }
+
+  const api = {
+    compact,
+    displayVehicleNumber,
+    normalizedTrack,
+    validOutboundTrain,
+    parseCandidates,
+    buildPlan,
+    autoSortItems,
+    planFromXLS,
+    titleFromFileName,
+    formatTime,
+    rowsAreConnected
+  };
+  root.NightShiftCore = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
+  <script>(function () {
+  "use strict";
+
+  const core = window.NightShiftCore;
+  const SETTINGS_KEY = "tong-night-plan-settings-v3";
+  const LEGACY_SETTINGS_KEYS = ["tong-night-plan-settings-v2", "tong-night-plan-settings-v1"];
+  const DRAFT_KEY = "tong-night-plan-draft-v1";
+  const HISTORY_LIMIT = 40;
+  const COLUMN_KEYS = ["sequence", "time", "vehicle", "track", "worker", "entryTime", "manualCleaning"];
+  const PRESET_IDS = ["mobileSimple", "mobileDetailed", "a4", "custom"];
+  const DEFAULT_PRESET_NAMES = {
+    mobileSimple: "手机简洁版",
+    mobileDetailed: "手机详细版",
+    a4: "A4 打印版",
+    custom: "自定义"
+  };
+  const DEFAULT_PRESET = "mobileDetailed";
+  const HEADER_LABELS = {
+    sequence: "序号",
+    time: "无电时间",
+    vehicle: "车号",
+    track: "股道",
+    worker: "作业人",
+    entryTime: "入所时间",
+    manualCleaning: "洗车"
+  };
+  const COLUMN_WEIGHTS = {
+    sequence: 0.56,
+    time: 0.94,
+    vehicle: 0.82,
+    track: 0.72,
+    worker: 0.64,
+    entryTime: 0.92,
+    manualCleaning: 1.24
+  };
+
+  function allVisibleColumns() {
+    return Object.fromEntries(COLUMN_KEYS.map((key) => [key, true]));
+  }
+
+  function defaultPresetColumns() {
+    return Object.fromEntries(PRESET_IDS.map((id) => [id, allVisibleColumns()]));
+  }
+
+  const defaultSettings = {
+    version: 3,
+    groups: [
+      { id: "group-1", name: "一组" },
+      { id: "group-2", name: "二组" },
+      { id: "group-3", name: "三组" }
+    ],
+    people: [],
+    displayPreset: DEFAULT_PRESET,
+    presetNames: { ...DEFAULT_PRESET_NAMES },
+    presetColumns: defaultPresetColumns(),
+    visibleColumns: allVisibleColumns(),
+    viewMode: "preview",
+    lastGroupId: "group-1"
+  };
+
+  const state = {
+    settings: loadSettings(),
+    todayGroupId: null,
+    plan: null,
+    history: [],
+    selectedIds: new Set(),
+    batchMode: false,
+    editingId: null,
+    drag: null,
+    exportURL: null
+  };
+  state.todayGroupId = state.settings.lastGroupId || state.settings.groups[0].id;
+
+  const $ = (id) => document.getElementById(id);
+  const homeView = $("homeView");
+  const planView = $("planView");
+  const xlsInput = $("xlsInput");
+  const importProgress = $("importProgress");
+  const settingsDialog = $("settingsDialog");
+  const editDialog = $("editDialog");
+  const exportCheckDialog = $("exportCheckDialog");
+  const imageExportDialog = $("imageExportDialog");
+  const pdfPreviewDialog = $("pdfPreviewDialog");
+  let toastTimer = null;
+
+  function clone(value) { return JSON.parse(JSON.stringify(value)); }
+
+  function loadJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (_) { return fallback; }
+  }
+
+  function saveJSON(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (_) {
+      showToast("当前打开方式无法永久保存本地数据");
+      return false;
+    }
+  }
+
+  function loadSettings() {
+    const stored = loadJSON(SETTINGS_KEY, null) || LEGACY_SETTINGS_KEYS.map((key) => loadJSON(key, null)).find(Boolean);
+    if (!stored || !Array.isArray(stored.groups) || stored.groups.length !== 3) return clone(defaultSettings);
+    const groups = defaultSettings.groups.map((fallback, index) => {
+      const saved = stored.groups[index] || {};
+      return { id: fallback.id, name: String(saved.name || fallback.name).trim() || fallback.name };
+    });
+    const presetNames = { ...DEFAULT_PRESET_NAMES };
+    if (stored.presetNames && typeof stored.presetNames === "object") {
+      PRESET_IDS.forEach((id) => {
+        const savedName = String(stored.presetNames[id] || "").trim();
+        if (savedName) presetNames[id] = savedName.slice(0, 18);
+      });
+    }
+    const presetColumns = defaultPresetColumns();
+    if (stored.presetColumns && typeof stored.presetColumns === "object") {
+      PRESET_IDS.forEach((id) => {
+        if (!stored.presetColumns[id]) return;
+        COLUMN_KEYS.forEach((key) => { presetColumns[id][key] = stored.presetColumns[id][key] !== false; });
+      });
+    }
+    const displayPreset = PRESET_IDS.includes(stored.displayPreset) ? stored.displayPreset : DEFAULT_PRESET;
+    return {
+      ...clone(defaultSettings),
+      ...stored,
+      version: 3,
+      groups,
+      people: Array.isArray(stored.people) ? stored.people : [],
+      displayPreset,
+      presetNames,
+      presetColumns,
+      visibleColumns: clone(presetColumns[displayPreset]),
+      viewMode: stored.viewMode === "edit" ? "edit" : "preview",
+      lastGroupId: groups.some((group) => group.id === stored.lastGroupId) ? stored.lastGroupId : defaultSettings.lastGroupId
+    };
+  }
+
+  function saveSettings() {
+    state.settings.lastGroupId = state.todayGroupId;
+    saveJSON(SETTINGS_KEY, state.settings);
+  }
+
+  function normalizePlan(plan) {
+    if (!plan || !Array.isArray(plan.items)) return plan;
+    plan.orderMode = plan.orderMode === "manual" ? "manual" : "auto";
+    plan.items.forEach((item) => {
+      if (!Object.prototype.hasOwnProperty.call(item, "entryStartMs")) item.entryStartMs = item.entryMs ?? null;
+      if (!Object.prototype.hasOwnProperty.call(item, "entryEndMs")) item.entryEndMs = null;
+      item.manualCleaning = Boolean(item.manualCleaning);
+      if (!Object.prototype.hasOwnProperty.call(item, "manualCleaningStartMs")) item.manualCleaningStartMs = null;
+      if (!Object.prototype.hasOwnProperty.call(item, "manualCleaningEndMs")) item.manualCleaningEndMs = null;
+      if (!Object.prototype.hasOwnProperty.call(item, "workerId")) item.workerId = null;
+      if (!Object.prototype.hasOwnProperty.call(item, "customRemark")) item.customRemark = "";
+    });
+    return plan;
+  }
+
+  function saveDraft() {
+    if (!state.plan) return;
+    saveJSON(DRAFT_KEY, { savedAt: Date.now(), todayGroupId: state.todayGroupId, plan: state.plan });
+    updateDraftButton();
+  }
+
+  function loadDraft() {
+    const draft = loadJSON(DRAFT_KEY, null);
+    if (!draft || !draft.plan || !Array.isArray(draft.plan.items)) return null;
+    normalizePlan(draft.plan);
+    return draft;
+  }
+
+  function showToast(message) {
+    const toast = $("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+  }
+
+  function showDialog(dialog) {
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+  }
+
+  function closeDialog(dialog) {
+    if (typeof dialog.close === "function") dialog.close();
+    else dialog.removeAttribute("open");
+  }
+
+  function makeElement(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+  }
+
+  function memberName(workerId) {
+    if (!workerId) return "";
+    return state.settings.people.find((person) => person.id === workerId)?.name || "";
+  }
+
+  function todayGroup() {
+    return state.settings.groups.find((group) => group.id === state.todayGroupId) || state.settings.groups[0];
+  }
+
+  function todayMembers() { return state.settings.people.filter((person) => person.groupId === state.todayGroupId); }
+  function isEditMode() { return state.settings.viewMode === "edit"; }
+
+  function renderHome() {
+    document.body.classList.remove("batch-mode", "edit-mode");
+    document.body.classList.add("preview-mode");
+    homeView.hidden = false;
+    planView.hidden = true;
+    renderGroupChoices();
+    updateDraftButton();
+  }
+
+  function renderGroupChoices() {
+    const container = $("todayGroupChoices");
+    container.replaceChildren();
+    state.settings.groups.forEach((group) => {
+      const button = makeElement("button", "group-choice", group.name);
+      button.type = "button";
+      button.setAttribute("role", "radio");
+      button.setAttribute("aria-checked", String(group.id === state.todayGroupId));
+      button.addEventListener("click", () => {
+        state.todayGroupId = group.id;
+        saveSettings();
+        renderGroupChoices();
+      });
+      container.append(button);
+    });
+  }
+
+  function updateDraftButton() {
+    const draft = loadDraft();
+    const button = $("resumeDraftButton");
+    button.hidden = !draft;
+    if (draft) button.textContent = `继续上次计划（${draft.plan.title} · ${draft.plan.items.length}辆）`;
+  }
+
+  async function importFile(file) {
+    if (!file || !/\.xls$/i.test(file.name)) return showToast("请选择后缀为 .xls 的原始计划文件");
+    importProgress.hidden = false;
+    xlsInput.disabled = true;
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      const parsed = normalizePlan(core.planFromXLS(await file.arrayBuffer(), file.name));
+      if (parsed.items.length === 0) throw new Error("这份计划中没有找到包含“一级修”的车辆");
+      state.plan = parsed;
+      state.plan.importedAt = Date.now();
+      state.history = [];
+      state.selectedIds.clear();
+      state.batchMode = false;
+      saveDraft();
+      renderPlan();
+      showToast(`已生成 ${parsed.items.length} 辆一级修计划`);
+    } catch (error) {
+      console.error(error);
+      showToast(error?.message || "Excel读取失败，请确认文件格式");
+    } finally {
+      importProgress.hidden = true;
+      xlsInput.disabled = false;
+      xlsInput.value = "";
+    }
+  }
+
+  function pushHistory() {
+    if (!state.plan) return;
+    state.history.push({ items: clone(state.plan.items), orderMode: state.plan.orderMode });
+    if (state.history.length > HISTORY_LIMIT) state.history.shift();
+    $("undoButton").disabled = false;
+  }
+
+  function renumber() { state.plan.items.forEach((item, index) => { item.sequence = index + 1; }); }
+
+  function afterPlanChange(message) {
+    renumber();
+    saveDraft();
+    renderPlanRows();
+    renderPlanSummary();
+    updateSortButton();
+    if (message) showToast(message);
+  }
+
+  function undo() {
+    const previous = state.history.pop();
+    if (!previous || !state.plan) return;
+    state.plan.items = previous.items;
+    state.plan.orderMode = previous.orderMode;
+    state.selectedIds.clear();
+    saveDraft();
+    renderPlanRows();
+    renderPlanSummary();
+    updateSortButton();
+    $("undoButton").disabled = state.history.length === 0;
+    showToast("已恢复上一步");
+  }
+
+  function applyViewMode() {
+    const editing = isEditMode();
+    document.body.classList.toggle("edit-mode", editing);
+    document.body.classList.toggle("preview-mode", !editing);
+    if (!editing) {
+      state.batchMode = false;
+      state.selectedIds.clear();
+    }
+    const button = $("viewModeButton");
+    button.textContent = editing ? "预览模式" : "编辑模式";
+    button.setAttribute("aria-pressed", String(editing));
+    $("planModeHint").textContent = editing ? "编辑模式 · 点击车辆修改信息" : "预览模式 · 表格效果与导出一致";
+  }
+
+  function toggleViewMode() {
+    state.settings.viewMode = isEditMode() ? "preview" : "edit";
+    saveSettings();
+    applyViewMode();
+    renderAssignmentPanel();
+    renderPlanRows();
+  }
+
+  function displayPlanTitle() {
+    const date = state.plan?.planDate;
+    if (date?.month && date?.day) return `${date.month}.${date.day} TONG的夜班计划`;
+    const match = String(state.plan?.title || "").match(/(\d{1,2})[.月](\d{1,2})/);
+    return match ? `${Number(match[1])}.${Number(match[2])} TONG的夜班计划` : (state.plan?.title || "TONG的夜班计划");
+  }
+
+  function formatTimeRange(startMs, endMs) {
+    if (startMs === null && endMs === null) return "—";
+    const start = core.formatTime(startMs) || "待确认";
+    const end = core.formatTime(endMs) || "待确认";
+    return `${start} - ${end}`;
+  }
+
+  function renderPlan() {
+    if (!state.plan) return renderHome();
+    normalizePlan(state.plan);
+    homeView.hidden = true;
+    planView.hidden = false;
+    applyViewMode();
+    document.body.classList.toggle("batch-mode", state.batchMode);
+    $("planTitle").textContent = displayPlanTitle();
+    renderPlanSummary();
+    renderAssignmentPanel();
+    renderPlanHeader();
+    renderPlanRows();
+    updateSortButton();
+    $("undoButton").disabled = state.history.length === 0;
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+
+  function renderPlanSummary() {
+    if (!state.plan) return;
+    $("planSummary").textContent = `${state.plan.items.length}辆一级修`;
+  }
+
+  function renderAssignmentPanel() {
+    const group = todayGroup();
+    $("assignmentGroupTitle").textContent = `${group.name}作业人`;
+    $("assignmentHint").textContent = todayMembers().length ? "作业人可以留空" : "请先在设置中添加本组人员";
+    $("batchModeButton").classList.toggle("active", state.batchMode);
+    $("batchModeButton").textContent = state.batchMode ? "完成选择" : "批量分配";
+    $("batchPanel").hidden = !state.batchMode;
+    $("selectedCount").textContent = `已选 ${state.selectedIds.size} 辆`;
+    renderMemberChips();
+  }
+
+  function renderMemberChips() {
+    const container = $("memberChips");
+    container.replaceChildren();
+    const members = todayMembers();
+    if (members.length === 0) {
+      container.append(makeElement("span", "empty-members", "本组还没有人员，请到设置中添加"));
+      return;
+    }
+    members.forEach((member) => {
+      const button = makeElement("button", "member-chip", member.name);
+      button.type = "button";
+      button.addEventListener("click", () => assignSelected(member.id));
+      container.append(button);
+    });
+  }
+
+  function visibleColumnOrder() {
+    return COLUMN_KEYS.filter((key) => state.settings.visibleColumns[key]);
+  }
+
+  function tableLayout() {
+    const order = visibleColumnOrder();
+    return { order, template: order.map((key) => `minmax(0, ${COLUMN_WEIGHTS[key]}fr)`).join(" "), count: order.length };
+  }
+
+  function renderPlanHeader() {
+    const header = $("planTableHeader");
+    const grid = tableLayout();
+    header.style.gridTemplateColumns = grid.template;
+    header.dataset.columns = String(grid.count);
+    header.replaceChildren();
+    grid.order.forEach((key) => header.append(makeElement("div", `cell ${key}-cell`, HEADER_LABELS[key])));
+  }
+
+  function renderPlanRows() {
+    if (!state.plan) return;
+    const container = $("planRows");
+    const grid = tableLayout();
+    container.replaceChildren();
+    state.plan.items.forEach((item, index) => {
+      const row = makeElement("div", "plan-grid plan-row");
+      row.dataset.id = item.id;
+      row.dataset.index = String(index);
+      row.dataset.columns = String(grid.count);
+      row.style.gridTemplateColumns = grid.template;
+      if (state.selectedIds.has(item.id)) row.classList.add("selected");
+      if (isEditMode()) {
+        const dragHandle = makeElement("button", "drag-handle");
+        dragHandle.type = "button";
+        dragHandle.setAttribute("aria-label", `拖动${item.vehicleNumber || `第${index + 1}辆车`}`);
+        dragHandle.addEventListener("pointerdown", (event) => beginDrag(event, item.id));
+        row.append(dragHandle);
+      }
+      grid.order.forEach((key) => row.append(makePlanCell(key, item, index)));
+      if (isEditMode()) {
+        row.addEventListener("click", (event) => {
+          if (event.target.closest(".drag-handle")) return;
+          if (state.batchMode) toggleSelected(item.id);
+          else openItemEditor(item.id);
+        });
+      }
+      container.append(row);
+    });
+    document.body.classList.toggle("batch-mode", state.batchMode);
+  }
+
+  function makePlanCell(key, item, index) {
+    if (key === "sequence") {
+      const cell = makeElement("div", "cell sequence-cell");
+      cell.append(makeElement("span", "sequence-badge", String(index + 1)));
+      return cell;
+    }
+    if (key === "time") return makeElement("div", "cell data-cell time-cell", core.formatTime(item.startMs));
+    if (key === "entryTime") {
+      return makeElement("div", `cell data-cell entryTime-cell${item.entryStartMs === null ? " empty" : ""}`, core.formatTime(item.entryStartMs) || "—");
+    }
+    if (key === "manualCleaning") {
+      const text = item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—";
+      return makeElement("div", `cell data-cell range-cell manualCleaning-cell${item.manualCleaning ? " yes" : ""}`, text);
+    }
+    if (key === "track") return makeElement("div", "cell data-cell track-cell", item.track || "—");
+    if (key === "worker") {
+      const name = memberName(item.workerId);
+      return makeElement("div", `cell data-cell worker-cell${name ? "" : " empty"}`, name || "未分配");
+    }
+    if (key === "vehicle") {
+      const cell = makeElement("div", "cell data-cell vehicle-cell");
+      const stack = makeElement("div", "vehicle-stack");
+      const numberWrap = makeElement("div", "vehicle-number-wrap");
+      numberWrap.append(makeElement("span", "vehicle-number", item.vehicleNumber || "待确认"));
+      if (item.coupledTrain) numberWrap.append(makeElement("span", "couple-badge", "联"));
+      stack.append(numberWrap);
+      if (item.wheelSetting) stack.append(makeElement("span", "wheel-setting-tag", "轮径设定"));
+      cell.append(stack);
+      const isCoupleMember = core.rowsAreConnected(state.plan.items, index) || core.rowsAreConnected(state.plan.items, index - 1);
+      if (isCoupleMember) cell.classList.add("couple-member");
+      if (core.rowsAreConnected(state.plan.items, index)) {
+        cell.classList.add("has-couple-mark");
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.classList.add("couple-mark");
+        svg.setAttribute("viewBox", "0 0 14 70");
+        svg.setAttribute("preserveAspectRatio", "none");
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", "M12 1 L2 35 L12 69");
+        svg.append(path);
+        cell.append(svg);
+        const firstCoupledIndex = state.plan.items.findIndex((candidate) => candidate.coupledTrain === item.coupledTrain);
+        if (firstCoupledIndex === index && item.coupledTrain) cell.append(makeElement("span", "couple-train-mid", item.coupledTrain));
+      }
+      return cell;
+    }
+    return makeElement("div", "cell data-cell");
+  }
+
+  function toggleBatchMode() {
+    if (!isEditMode()) return;
+    state.batchMode = !state.batchMode;
+    if (!state.batchMode) state.selectedIds.clear();
+    renderAssignmentPanel();
+    renderPlanRows();
+  }
+
+  function toggleSelected(id) {
+    if (state.selectedIds.has(id)) state.selectedIds.delete(id);
+    else state.selectedIds.add(id);
+    renderAssignmentPanel();
+    renderPlanRows();
+  }
+
+  function assignSelected(workerId) {
+    if (!state.selectedIds.size) return showToast("请先点选需要分配的车辆");
+    pushHistory();
+    state.plan.items.forEach((item) => { if (state.selectedIds.has(item.id)) item.workerId = workerId; });
+    const count = state.selectedIds.size;
+    state.selectedIds.clear();
+    afterPlanChange(`已批量分配 ${count} 辆车`);
+    renderAssignmentPanel();
+  }
+
+  function clearAllWorkers() {
+    if (!state.plan.items.some((item) => item.workerId)) return showToast("当前没有已分配的作业人");
+    pushHistory();
+    state.plan.items.forEach((item) => { item.workerId = null; });
+    state.selectedIds.clear();
+    afterPlanChange("已清空全部作业人，可点击撤销恢复");
+    renderAssignmentPanel();
+  }
+
+  function groupedUnits() {
+    const handled = new Set();
+    const units = [];
+    state.plan.items.forEach((item) => {
+      if (handled.has(item.id)) return;
+      if (item.coupledTrain) {
+        const group = state.plan.items.filter((candidate) => candidate.coupledTrain === item.coupledTrain);
+        group.forEach((candidate) => handled.add(candidate.id));
+        units.push(group);
+      } else {
+        handled.add(item.id);
+        units.push([item]);
+      }
+    });
+    return units;
+  }
+
+  function unitIndexForId(units, id) { return units.findIndex((unit) => unit.some((item) => item.id === id)); }
+
+  function unitLabel(unit) {
+    const numbers = unit.map((item) => item.vehicleNumber || "待确认").join("、");
+    return unit.length > 1 ? `重联车辆 ${numbers}（整组）` : `车辆 ${numbers}`;
+  }
+
+  function confirmUnitMove(unit, direction, suffix = "一位") {
+    return window.confirm(`确认将${unitLabel(unit)}${direction}${suffix}吗？\n移动后可点击“撤销”恢复上一步。`);
+  }
+
+  function moveUnitTo(sourceIndex, targetIndex, direction, suffix) {
+    const units = groupedUnits();
+    if (sourceIndex < 0 || targetIndex < 0 || targetIndex >= units.length || sourceIndex === targetIndex) return false;
+    const unit = units[sourceIndex];
+    if (!confirmUnitMove(unit, direction, suffix)) return false;
+    pushHistory();
+    const [moved] = units.splice(sourceIndex, 1);
+    units.splice(targetIndex, 0, moved);
+    state.plan.items = units.flat();
+    state.plan.orderMode = "manual";
+    afterPlanChange(`${unitLabel(unit)}已${direction}${suffix}`);
+    return true;
+  }
+
+  function beginDrag(event, id) {
+    if (!isEditMode() || state.batchMode || event.button > 0) return;
+    event.preventDefault();
+    const units = groupedUnits();
+    state.drag = { id, startUnitIndex: unitIndexForId(units, id), targetId: id, pointerId: event.pointerId };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    document.addEventListener("pointermove", updateDrag, { passive: false });
+    document.addEventListener("pointerup", finishDrag, { once: true });
+    document.addEventListener("pointercancel", cancelDrag, { once: true });
+    document.body.style.userSelect = "none";
+  }
+
+  function updateDrag(event) {
+    if (!state.drag || event.pointerId !== state.drag.pointerId) return;
+    event.preventDefault();
+    const row = document.elementFromPoint(event.clientX, event.clientY)?.closest(".plan-row");
+    if (!row) return;
+    state.drag.targetId = row.dataset.id;
+    document.querySelectorAll(".plan-row.drag-target").forEach((element) => element.classList.remove("drag-target"));
+    row.classList.add("drag-target");
+  }
+
+  function finishDrag(event) {
+    if (!state.drag || event.pointerId !== state.drag.pointerId) return cancelDrag();
+    const units = groupedUnits();
+    const { startUnitIndex, targetId } = state.drag;
+    const targetUnitIndex = unitIndexForId(units, targetId);
+    cleanDragListeners();
+    if (startUnitIndex === targetUnitIndex || targetUnitIndex < 0) return;
+    const direction = targetUnitIndex < startUnitIndex ? "上移" : "下移";
+    moveUnitTo(startUnitIndex, targetUnitIndex, direction, "到指定位置");
+  }
+
+  function cancelDrag() { cleanDragListeners(); renderPlanRows(); }
+
+  function cleanDragListeners() {
+    state.drag = null;
+    document.removeEventListener("pointermove", updateDrag);
+    document.body.style.userSelect = "";
+    document.querySelectorAll(".plan-row.drag-target").forEach((element) => element.classList.remove("drag-target"));
+  }
+
+  function automaticRemarkText(item) {
+    const values = [];
+    if (item.coupledTrain) values.push(`重联车辆 · 车次 ${item.coupledTrain}`);
+    if (item.wheelSetting) values.push("轮径设定");
+    return values.join("；") || "无";
+  }
+
+  function fillWorkerSelect(select, selectedId) {
+    select.replaceChildren();
+    const empty = makeElement("option", "", "留空");
+    empty.value = "";
+    select.append(empty);
+    todayMembers().forEach((person) => {
+      const option = makeElement("option", "", person.name);
+      option.value = person.id;
+      option.selected = person.id === selectedId;
+      select.append(option);
+    });
+  }
+
+  function openItemEditor(id) {
+    if (!isEditMode()) return;
+    const item = state.plan.items.find((candidate) => candidate.id === id);
+    if (!item) return;
+    state.editingId = id;
+    $("editDialogTitle").textContent = `${item.vehicleNumber || "待确认"} 车辆信息`;
+    $("editTime").value = core.formatTime(item.startMs);
+    $("editEntryTime").value = core.formatTime(item.entryStartMs);
+    $("editVehicle").value = item.vehicleNumber;
+    $("editTrack").value = item.track;
+    $("editManualCleaning").value = String(Boolean(item.manualCleaning));
+    $("editManualCleaningStartTime").value = core.formatTime(item.manualCleaningStartMs);
+    $("editManualCleaningEndTime").value = core.formatTime(item.manualCleaningEndMs);
+    fillWorkerSelect($("editWorker"), item.workerId);
+    $("automaticRemarkPreview").textContent = automaticRemarkText(item);
+    const units = groupedUnits();
+    const unitIndex = unitIndexForId(units, id);
+    $("moveUpButton").disabled = unitIndex <= 0;
+    $("moveDownButton").disabled = unitIndex >= units.length - 1;
+    $("deleteVehicleButton").textContent = units[unitIndex]?.length > 1 ? "删除整组重联车辆" : "删除车辆";
+    showDialog(editDialog);
+  }
+
+  function timestampForEditedTime(item, rawTime, allowEmpty = false) {
+    if (!rawTime && allowEmpty) return null;
+    const [hour, minute] = String(rawTime).split(":").map(Number);
+    if (!Number.isInteger(hour) || !Number.isInteger(minute)) return null;
+    const source = item.startMs !== null ? new Date(item.startMs) : null;
+    const base = state.plan.planDate || {
+      year: source?.getFullYear() || new Date().getFullYear(),
+      month: (source?.getMonth() ?? new Date().getMonth()) + 1,
+      day: source?.getDate() || new Date().getDate()
+    };
+    const date = new Date(base.year, base.month - 1, base.day, hour, minute, 0, 0);
+    if (hour < 12) date.setDate(date.getDate() + 1);
+    return date.getTime();
+  }
+
+  function endTimestampForRange(item, rawTime, startMs) {
+    const endMs = timestampForEditedTime(item, rawTime, true);
+    if (endMs === null || startMs === null) return endMs;
+    return endMs < startMs ? endMs + 86400000 : endMs;
+  }
+
+  function saveEditedItem(event) {
+    event.preventDefault();
+    const item = state.plan.items.find((candidate) => candidate.id === state.editingId);
+    if (!item) return;
+    const displayVehicle = core.displayVehicleNumber($("editVehicle").value);
+    const time = timestampForEditedTime(item, $("editTime").value);
+    const entryStartMs = timestampForEditedTime(item, $("editEntryTime").value, true);
+    const manualCleaning = $("editManualCleaning").value === "true";
+    const manualCleaningStartMs = timestampForEditedTime(item, $("editManualCleaningStartTime").value, true);
+    const manualCleaningEndMs = endTimestampForRange(item, $("editManualCleaningEndTime").value, manualCleaningStartMs);
+    const track = core.normalizedTrack($("editTrack").value);
+    if (!displayVehicle || time === null || !track) return showToast("请完整填写时间、四位车号和股道");
+    if (manualCleaning && (manualCleaningStartMs === null || manualCleaningEndMs === null)) return showToast("洗车需要同时填写开始和结束时间");
+    pushHistory();
+    item.vehicleNumber = displayVehicle;
+    item.startMs = time;
+    item.entryStartMs = entryStartMs;
+    item.entryEndMs = null;
+    item.manualCleaning = manualCleaning;
+    item.manualCleaningStartMs = manualCleaning ? manualCleaningStartMs : null;
+    item.manualCleaningEndMs = manualCleaning ? manualCleaningEndMs : null;
+    item.track = track;
+    item.workerId = $("editWorker").value || null;
+    item.issues = [];
+    closeDialog(editDialog);
+    afterPlanChange("车辆信息已保存；当前顺序保持不变");
+    renderAssignmentPanel();
+  }
+
+  function moveEditingItem(delta) {
+    const units = groupedUnits();
+    const source = unitIndexForId(units, state.editingId);
+    const target = source + delta;
+    if (source < 0 || target < 0 || target >= units.length) return;
+    const id = state.editingId;
+    if (moveUnitTo(source, target, delta < 0 ? "上移" : "下移", "一位")) openItemEditor(id);
+  }
+
+  function deleteEditingItem() {
+    const units = groupedUnits();
+    const index = unitIndexForId(units, state.editingId);
+    if (index < 0) return;
+    const unit = units[index];
+    if (!window.confirm(`确认删除${unitLabel(unit)}吗？\n删除后可点击“撤销”恢复上一步。`)) return;
+    pushHistory();
+    const ids = new Set(unit.map((item) => item.id));
+    state.plan.items = state.plan.items.filter((item) => !ids.has(item.id));
+    state.plan.orderMode = "manual";
+    closeDialog(editDialog);
+    afterPlanChange(`${unitLabel(unit)}已删除`);
+  }
+
+  function updateSortButton() {
+    if (!state.plan) return;
+    $("autoSortButton").classList.toggle("attention", state.plan.orderMode === "manual");
+    $("autoSortButton").textContent = state.plan.orderMode === "manual" ? "重新自动排序" : "自动排序";
+  }
+
+  function autoSortPlan() {
+    if (!state.plan?.items.length) return;
+    pushHistory();
+    state.plan.items = core.autoSortItems(state.plan.items);
+    state.plan.orderMode = "auto";
+    afterPlanChange("已按无电时间重新自动排序");
+  }
+
+  function openSettings() { renderSettings(); showDialog(settingsDialog); }
+
+  function renderSettings() {
+    const groupNameList = $("groupNameList");
+    groupNameList.replaceChildren();
+    state.settings.groups.forEach((group, index) => {
+      const label = makeElement("label", "group-name-row");
+      label.append(makeElement("span", "", `第${index + 1}组名称`));
+      const input = document.createElement("input");
+      input.type = "text";
+      input.maxLength = 12;
+      input.value = group.name;
+      input.setAttribute("aria-label", `修改第${index + 1}组名称`);
+      input.addEventListener("input", () => {
+        const name = input.value.trim();
+        if (!name) return;
+        group.name = name;
+        saveSettings();
+        renderGroupChoices();
+        if (state.plan) { renderPlanSummary(); renderAssignmentPanel(); }
+      });
+      input.addEventListener("change", () => {
+        const name = input.value.trim();
+        if (!name) { input.value = group.name; return showToast("班组名称不能为空"); }
+        group.name = name;
+        saveSettings();
+        renderGroupChoices();
+        if (state.plan) { renderPlanSummary(); renderAssignmentPanel(); }
+        showToast(`班组名称已改为“${name}”`);
+      });
+      label.append(input);
+      groupNameList.append(label);
+    });
+
+    const list = $("peopleList");
+    list.replaceChildren();
+    if (state.settings.people.length === 0) list.append(makeElement("div", "empty-people", "尚未添加人员。可以先为三个班组添加成员。"));
+    state.settings.people.forEach((person) => {
+      const row = makeElement("div", "person-row");
+      const input = document.createElement("input");
+      input.value = person.name;
+      input.maxLength = 12;
+      input.setAttribute("aria-label", "人员姓名");
+      input.addEventListener("change", () => {
+        const name = input.value.trim();
+        if (!name) { input.value = person.name; return showToast("姓名不能为空"); }
+        person.name = name;
+        saveSettings();
+        if (state.plan) { renderPlanRows(); saveDraft(); }
+      });
+      const select = groupSelect(person.groupId);
+      select.addEventListener("change", () => {
+        person.groupId = select.value;
+        saveSettings();
+        if (state.plan) renderAssignmentPanel();
+      });
+      const remove = makeElement("button", "delete-person", "×");
+      remove.type = "button";
+      remove.setAttribute("aria-label", `删除${person.name}`);
+      remove.addEventListener("click", () => {
+        if (!window.confirm(`确定删除“${person.name}”吗？`)) return;
+        state.settings.people = state.settings.people.filter((candidate) => candidate.id !== person.id);
+        if (state.plan) state.plan.items.forEach((item) => { if (item.workerId === person.id) item.workerId = null; });
+        saveSettings();
+        saveDraft();
+        renderSettings();
+        if (state.plan) { renderPlanRows(); renderAssignmentPanel(); renderPlanSummary(); }
+      });
+      row.append(input, select, remove);
+      list.append(row);
+    });
+    const newGroup = $("newPersonGroup");
+    fillGroupSelect(newGroup, newGroup.value || state.todayGroupId);
+    renderPresetList();
+    document.querySelectorAll("[data-column-key]").forEach((checkbox) => { checkbox.checked = Boolean(state.settings.visibleColumns[checkbox.dataset.columnKey]); });
+  }
+
+  function renderPresetList() {
+    const container = $("displayPresetList");
+    container.replaceChildren();
+    PRESET_IDS.forEach((id, index) => {
+      const row = makeElement("div", `preset-row${state.settings.displayPreset === id ? " active" : ""}`);
+      const label = makeElement("label", "preset-name-field");
+      label.append(makeElement("span", "", `方案 ${index + 1}`));
+      const input = document.createElement("input");
+      input.type = "text";
+      input.maxLength = 18;
+      input.value = state.settings.presetNames[id];
+      input.setAttribute("aria-label", `修改方案${index + 1}名称`);
+      input.addEventListener("input", () => {
+        const name = input.value.trim();
+        if (!name) return;
+        state.settings.presetNames[id] = name;
+        saveSettings();
+      });
+      input.addEventListener("change", () => {
+        const name = input.value.trim();
+        if (!name) {
+          input.value = state.settings.presetNames[id];
+          return showToast("方案名称不能为空");
+        }
+        state.settings.presetNames[id] = name;
+        saveSettings();
+        renderPresetList();
+        showToast(`方案名称已保存为“${name}”`);
+      });
+      label.append(input);
+      const button = makeElement("button", "preset-use-button", state.settings.displayPreset === id ? "使用中" : "使用此方案");
+      button.type = "button";
+      button.disabled = state.settings.displayPreset === id;
+      button.addEventListener("click", () => applyDisplayPreset(id));
+      row.append(label, button);
+      container.append(row);
+    });
+  }
+
+  function fillGroupSelect(select, selectedId) {
+    select.replaceChildren();
+    state.settings.groups.forEach((group) => {
+      const option = makeElement("option", "", group.name);
+      option.value = group.id;
+      option.selected = group.id === selectedId;
+      select.append(option);
+    });
+  }
+
+  function groupSelect(selectedId) {
+    const select = document.createElement("select");
+    select.setAttribute("aria-label", "所属班组");
+    fillGroupSelect(select, selectedId);
+    return select;
+  }
+
+  function addPerson(event) {
+    event.preventDefault();
+    const name = $("newPersonName").value.trim();
+    if (!name) return showToast("请先输入人员姓名");
+    state.settings.people.push({ id: `person-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`, name, groupId: $("newPersonGroup").value });
+    $("newPersonName").value = "";
+    saveSettings();
+    renderSettings();
+    if (state.plan) renderAssignmentPanel();
+    showToast(`已添加 ${name}`);
+  }
+
+  function refreshDisplay() {
+    saveSettings();
+    renderSettings();
+    if (state.plan) { renderPlanHeader(); renderPlanRows(); }
+  }
+
+  function applyDisplayPreset(name, announce = true) {
+    if (!PRESET_IDS.includes(name)) return;
+    state.settings.displayPreset = name;
+    state.settings.visibleColumns = clone(state.settings.presetColumns[name]);
+    refreshDisplay();
+    if (announce) showToast(`已应用“${state.settings.presetNames[name]}”`);
+  }
+
+  function restoreDefaultDisplay() {
+    const id = state.settings.displayPreset;
+    state.settings.presetColumns[id] = allVisibleColumns();
+    state.settings.visibleColumns = allVisibleColumns();
+    refreshDisplay();
+    showToast("已恢复默认显示");
+  }
+
+  function changeColumnVisibility(key, visible) {
+    if (!COLUMN_KEYS.includes(key)) return;
+    const enabledCount = COLUMN_KEYS.filter((column) => state.settings.visibleColumns[column]).length;
+    if (!visible && enabledCount <= 1) {
+      const checkbox = document.querySelector(`[data-column-key="${key}"]`);
+      if (checkbox) checkbox.checked = true;
+      return showToast("至少保留一列显示");
+    }
+    state.settings.visibleColumns[key] = visible;
+    state.settings.presetColumns[state.settings.displayPreset][key] = visible;
+    refreshDisplay();
+  }
+
+  function fitCanvasText(context, text, maxWidth) {
+    const value = String(text ?? "");
+    if (context.measureText(value).width <= maxWidth) return value;
+    let result = value;
+    while (result.length > 1 && context.measureText(`${result}…`).width > maxWidth) result = result.slice(0, -1);
+    return `${result}…`;
+  }
+
+  function canvasColumns(tableX = 18, tableWidth = 394) {
+    const order = visibleColumnOrder();
+    const totalWeight = order.reduce((sum, key) => sum + COLUMN_WEIGHTS[key], 0);
+    let x = tableX;
+    return order.map((key, index) => {
+      const width = index === order.length - 1 ? tableX + tableWidth - x : tableWidth * COLUMN_WEIGHTS[key] / totalWeight;
+      const column = { key, x, width };
+      x += width;
+      return column;
+    });
+  }
+
+  function drawCenteredText(context, text, column, y, font, color = "#162033") {
+    context.font = font;
+    context.fillStyle = color;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(fitCanvasText(context, text, column.width - 6), column.x + column.width / 2, y);
+  }
+
+  function drawCanvasVehicle(context, item, column, centerY) {
+    const number = item.vehicleNumber || "待确认";
+    const numberY = item.wheelSetting ? centerY - 7 : centerY;
+    context.font = "780 15px -apple-system, PingFang SC, Arial";
+    const fittedNumber = fitCanvasText(context, number, column.width - 13);
+    const numberWidth = context.measureText(fittedNumber).width;
+    const numberX = column.x + (column.width - numberWidth) / 2;
+    context.fillStyle = "#162033";
+    context.textAlign = "left";
+    context.textBaseline = "middle";
+    context.fillText(fittedNumber, numberX, numberY);
+    if (item.coupledTrain) {
+      context.font = "800 8px -apple-system, PingFang SC, Arial";
+      context.fillStyle = "#1769e0";
+      context.fillText("联", numberX + numberWidth + 1, numberY - 8);
+    }
+    if (item.wheelSetting) {
+      drawCenteredText(context, "轮径设定", column, centerY + 13, "750 9px -apple-system, PingFang SC, Arial", "#0d53bc");
+    }
+  }
+
+  function renderExportCanvas() {
+    const logicalWidth = 430;
+    const titleHeight = 72;
+    const headerHeight = 43;
+    const rowHeight = 74;
+    const bottom = 22;
+    const logicalHeight = titleHeight + headerHeight + rowHeight * state.plan.items.length + bottom;
+    const outputWidth = 1080;
+    const scale = outputWidth / logicalWidth;
+    const canvas = document.createElement("canvas");
+    canvas.width = outputWidth;
+    canvas.height = Math.ceil(logicalHeight * scale);
+    const context = canvas.getContext("2d", { alpha: false });
+    context.scale(scale, scale);
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, logicalWidth, logicalHeight);
+    context.fillStyle = "#111827";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.font = "800 23px -apple-system, PingFang SC, Arial";
+    context.fillText(displayPlanTitle(), logicalWidth / 2, 28);
+    context.font = "600 10px -apple-system, PingFang SC, Arial";
+    context.fillStyle = "#718096";
+    context.fillText(`${state.plan.items.length}辆一级修`, logicalWidth / 2, 51);
+    const tableX = 18;
+    const tableWidth = 394;
+    const columns = canvasColumns(tableX, tableWidth);
+    context.fillStyle = "#eaf1fa";
+    context.fillRect(tableX, titleHeight, tableWidth, headerHeight);
+    columns.forEach((column) => {
+      const isSequence = column.key === "sequence";
+      const fontSize = isSequence ? 10 : 11;
+      drawCenteredText(
+        context,
+        HEADER_LABELS[column.key],
+        column,
+        titleHeight + headerHeight / 2,
+        `800 ${fontSize}px -apple-system, PingFang SC, Arial`,
+        isSequence ? "#1769e0" : "#334155"
+      );
+    });
+    state.plan.items.forEach((item, index) => {
+      const y = titleHeight + headerHeight + index * rowHeight;
+      if (index % 2 === 1) { context.fillStyle = "#fafbfd"; context.fillRect(tableX, y, tableWidth, rowHeight); }
+      const centerY = y + rowHeight / 2;
+      columns.forEach((column) => {
+        if (column.key === "sequence") {
+          context.fillStyle = "#dcecff";
+          context.beginPath(); context.arc(column.x + column.width / 2, centerY, 13, 0, Math.PI * 2); context.fill();
+          drawCenteredText(context, String(index + 1), column, centerY, "700 13px ui-rounded, -apple-system, PingFang SC, Arial", "#1769e0");
+        } else if (column.key === "time") drawCenteredText(context, core.formatTime(item.startMs), column, centerY, "760 15px -apple-system, PingFang SC, Arial");
+        else if (column.key === "entryTime") drawCenteredText(context, core.formatTime(item.entryStartMs) || "—", column, centerY, "650 12px -apple-system, PingFang SC, Arial", item.entryStartMs === null ? "#9aa5b4" : "#162033");
+        else if (column.key === "vehicle") drawCanvasVehicle(context, item, column, centerY);
+        else if (column.key === "track") drawCenteredText(context, item.track, column, centerY, "650 14px -apple-system, PingFang SC, Arial");
+        else if (column.key === "worker") drawCenteredText(context, memberName(item.workerId), column, centerY, "650 13px -apple-system, PingFang SC, Arial");
+        else if (column.key === "manualCleaning") drawCenteredText(context, item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—", column, centerY, "700 10px -apple-system, PingFang SC, Arial", item.manualCleaning ? "#0d53bc" : "#9aa5b4");
+      });
+    });
+    context.strokeStyle = "#d5dde8";
+    context.lineWidth = 0.8;
+    for (let index = 0; index <= state.plan.items.length; index += 1) {
+      const y = titleHeight + headerHeight + index * rowHeight;
+      context.beginPath(); context.moveTo(tableX, y); context.lineTo(tableX + tableWidth, y); context.stroke();
+    }
+    context.strokeStyle = "#bfcbd9";
+    context.lineWidth = 1;
+    context.strokeRect(tableX, titleHeight, tableWidth, headerHeight + rowHeight * state.plan.items.length);
+    const vehicleColumn = columns.find((column) => column.key === "vehicle");
+    if (vehicleColumn) state.plan.items.forEach((item, index) => {
+      if (!core.rowsAreConnected(state.plan.items, index)) return;
+      const upperCenter = titleHeight + headerHeight + index * rowHeight + rowHeight / 2;
+      const right = vehicleColumn.x + 5;
+      const point = vehicleColumn.x - 5;
+      context.strokeStyle = "#111827";
+      context.lineWidth = 2.5;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      context.beginPath(); context.moveTo(right, upperCenter - 2); context.lineTo(point, upperCenter + rowHeight / 2); context.lineTo(right, upperCenter + rowHeight + 2); context.stroke();
+      const firstCoupledIndex = state.plan.items.findIndex((candidate) => candidate.coupledTrain === item.coupledTrain);
+      if (firstCoupledIndex === index && item.coupledTrain) {
+        context.font = "650 8px -apple-system, PingFang SC, Arial";
+        const train = fitCanvasText(context, item.coupledTrain, vehicleColumn.width - 10);
+        const trainWidth = context.measureText(train).width;
+        const trainY = upperCenter + rowHeight / 2;
+        context.fillStyle = "#ffffff";
+        context.fillRect(vehicleColumn.x + (vehicleColumn.width - trainWidth) / 2 - 3, trainY - 6, trainWidth + 6, 12);
+        context.fillStyle = "#617086";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(train, vehicleColumn.x + vehicleColumn.width / 2, trainY);
+      }
+    });
+    return canvas;
+  }
+
+  function estimatedRowsPerPdfPage() {
+    const count = visibleColumnOrder().length;
+    if (count >= 8) return 11;
+    if (count === 7) return 12;
+    if (count === 6) return 14;
+    return 16;
+  }
+
+  function paginatedPdfItems() {
+    const capacity = estimatedRowsPerPdfPage();
+    const units = [];
+    const handled = new Set();
+    state.plan.items.forEach((item, index) => {
+      if (handled.has(item.id)) return;
+      const matching = item.coupledTrain
+        ? state.plan.items.map((candidate, candidateIndex) => ({ item: candidate, index: candidateIndex })).filter((entry) => entry.item.coupledTrain === item.coupledTrain)
+        : [{ item, index }];
+      matching.forEach((entry) => handled.add(entry.item.id));
+      units.push(matching);
+    });
+    const pages = [];
+    let page = [];
+    units.forEach((unit) => {
+      if (page.length && page.length + unit.length > capacity) { pages.push(page); page = []; }
+      page.push(...unit);
+    });
+    if (page.length || !pages.length) pages.push(page);
+    return pages;
+  }
+
+  function estimatedPdfPages() { return paginatedPdfItems().length; }
+
+  function openExportCheck() {
+    if (!state.plan?.items.length) return;
+    const columns = visibleColumnOrder();
+    const summary = $("exportCheckSummary");
+    summary.replaceChildren();
+    [["当前显示列数", `${columns.length} 列`], ["车辆数", `${state.plan.items.length} 辆`], ["PDF 预计页数", `${estimatedPdfPages()} 页`]].forEach(([label, value]) => {
+      const card = makeElement("div", "export-stat");
+      card.append(makeElement("span", "", label), makeElement("strong", "", value));
+      summary.append(card);
+    });
+    summary.append(makeElement("p", "export-columns", `显示列：${columns.map((key) => HEADER_LABELS[key]).join("、")}`));
+    showDialog(exportCheckDialog);
+  }
+
+  async function exportImage() {
+    if (!state.plan?.items.length) return;
+    const button = $("exportImageButton");
+    button.disabled = true;
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      const canvas = renderExportCanvas();
+      const blob = await new Promise((resolve, reject) => canvas.toBlob((value) => value ? resolve(value) : reject(new Error("图片生成失败")), "image/png", 1));
+      const safeTitle = displayPlanTitle().replace(/[\\/:*?"<>|]/g, "-");
+      const file = new File([blob], `${safeTitle}.png`, { type: "image/png" });
+      closeDialog(exportCheckDialog);
+      showExportPreview(blob, `${safeTitle}.png`);
+    } catch (error) {
+      console.error(error);
+      showToast(error?.message || "导出图片失败");
+    } finally { button.disabled = false; }
+  }
+
+  function showExportPreview(blob, fileName) {
+    if (state.exportURL) URL.revokeObjectURL(state.exportURL);
+    state.exportURL = URL.createObjectURL(blob);
+    $("exportPreview").src = state.exportURL;
+    $("downloadImageLink").href = state.exportURL;
+    $("downloadImageLink").download = fileName;
+    showDialog(imageExportDialog);
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
+  }
+
+  function pdfCellText(key, item, index) {
+    if (key === "sequence") return String(index + 1);
+    if (key === "time") return core.formatTime(item.startMs);
+    if (key === "worker") return memberName(item.workerId);
+    if (key === "entryTime") return core.formatTime(item.entryStartMs) || "—";
+    if (key === "manualCleaning") return item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—";
+    if (key === "track") return item.track || "—";
+    return "—";
+  }
+
+  function pdfVehicleMarkup(item, index) {
+    const badge = item.coupledTrain ? '<span class="couple-badge">联</span>' : "";
+    const wheel = item.wheelSetting ? '<span class="wheel-setting-tag">轮径设定</span>' : "";
+    let relation = "";
+    if (core.rowsAreConnected(state.plan.items, index)) {
+      const firstCoupledIndex = state.plan.items.findIndex((candidate) => candidate.coupledTrain === item.coupledTrain);
+      const train = firstCoupledIndex === index
+        ? `<span class="couple-train-mid">${escapeHTML(item.coupledTrain)}</span>`
+        : "";
+      relation = `<svg class="couple-mark" viewBox="0 0 14 70" preserveAspectRatio="none"><path d="M12 1 L2 35 L12 69"></path></svg>${train}`;
+    }
+    return `<div class="vehicle-stack"><div class="vehicle-number-wrap"><span class="vehicle-number">${escapeHTML(item.vehicleNumber || "待确认")}</span>${badge}</div>${wheel}</div>${relation}`;
+  }
+
+  function pdfCellMarkup(key, item, index) {
+    if (key === "vehicle") return pdfVehicleMarkup(item, index);
+    if (key === "sequence") return `<span class="sequence-badge">${index + 1}</span>`;
+    return escapeHTML(pdfCellText(key, item, index));
+  }
+
+  function pdfPagesMarkup() {
+    const columns = visibleColumnOrder();
+    const pages = paginatedPdfItems();
+    return pages.map((entries, pageIndex) => {
+      const head = columns.map((key) => `<th class="col-${key}">${escapeHTML(HEADER_LABELS[key])}</th>`).join("");
+      const rows = entries.map(({ item, index }) => {
+        const className = item.wheelSetting ? ' class="has-vehicle-detail"' : "";
+        return `<tr${className}>${columns.map((key) => `<td class="col-${key}">${pdfCellMarkup(key, item, index)}</td>`).join("")}</tr>`;
+      }).join("");
+      return `<section class="pdf-page" data-page="${pageIndex + 1}"><header><h1>${escapeHTML(displayPlanTitle())}</h1><p>${state.plan.items.length}辆一级修</p></header><table data-columns="${columns.length}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table><footer><span></span><strong>第${pageIndex + 1}/${pages.length}页</strong></footer></section>`;
+    }).join("");
+  }
+
+  function openPdfPreview() {
+    closeDialog(exportCheckDialog);
+    const pages = estimatedPdfPages();
+    $("pdfPreviewSummary").textContent = `预计 ${pages} 页 · ${visibleColumnOrder().length} 列 · ${state.plan.items.length} 辆`;
+    $("pdfPreviewPages").innerHTML = pdfPagesMarkup();
+    showDialog(pdfPreviewDialog);
+  }
+
+  function printDocumentHTML() {
+    const columnCount = visibleColumnOrder().length;
+    const fontSize = columnCount >= 8 ? "9.4pt" : columnCount >= 7 ? "10pt" : "10.8pt";
+    const rowHeight = columnCount >= 8 ? "12.6mm" : columnCount >= 6 ? "10.6mm" : "9mm";
+    return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>${escapeHTML(displayPlanTitle())}</title><style>
+      @page { size: A4 landscape; margin: 0; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; color: #162033; background: white; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif; }
+      .pdf-page { position: relative; width: 297mm; height: 210mm; padding: 10mm 11mm 9mm; overflow: hidden; page-break-after: always; break-after: page; }
+      .pdf-page:last-child { page-break-after: auto; break-after: auto; }
+      header { height: 18mm; text-align: center; }
+      h1 { margin: 0; font-size: 18pt; letter-spacing: .02em; }
+      header p { margin: 2.2mm 0 0; color: #66758a; font-size: 8.8pt; }
+      table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: ${fontSize}; }
+      th { height: 11mm; padding: 1.5mm 1mm; color: #334155; border-bottom: .3mm solid #cad6e4; background: #eaf1fa; font-weight: 800; }
+      th.col-sequence { color: #1769e0; font-size: .9em; }
+      td { position: relative; height: ${rowHeight}; padding: 1.2mm 1mm; border-bottom: .25mm solid #edf1f6; text-align: center; font-weight: 600; overflow: visible; overflow-wrap: anywhere; }
+      tbody tr:nth-child(even) td { background: #fafbfd; }
+      .col-sequence { width: 7%; } .col-time { width: 12%; } .col-vehicle { width: 13%; } .col-track { width: 9%; }
+      .col-worker { width: 11%; } .col-entryTime { width: 14%; } .col-manualCleaning { width: 34%; }
+      .sequence-badge { display: inline-grid; width: 6.5mm; height: 6.5mm; place-items: center; color: #1769e0; border-radius: 50%; background: #dcecff; font-size: .88em; font-weight: 750; }
+      .vehicle-stack { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1mm; }
+      .vehicle-number-wrap { position: relative; display: inline-flex; }
+      .vehicle-number { font-size: 1.08em; font-weight: 800; }
+      .couple-badge { position: absolute; left: calc(100% + .4mm); top: -1.2mm; color: #1769e0; font-size: .55em; font-weight: 850; }
+      .wheel-setting-tag { color: #0d53bc; font-size: .7em; font-weight: 750; white-space: nowrap; }
+      .couple-mark { position: absolute; z-index: 3; left: 1mm; top: 50%; width: 3.2mm; height: 100%; overflow: visible; }
+      .couple-mark path { fill: none; stroke: #111827; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+      .couple-train-mid { position: absolute; z-index: 4; left: 50%; top: calc(100% - 1.6mm); padding: 0 .8mm; color: #617086; background: white; font-size: .58em; font-weight: 650; line-height: 3.2mm; white-space: nowrap; transform: translateX(-50%); }
+      footer { position: absolute; right: 11mm; bottom: 4mm; left: 11mm; display: flex; justify-content: space-between; color: #7a8798; font-size: 7.5pt; }
+      footer strong { color: #4f5f73; }
+    </style></head><body>${pdfPagesMarkup()}
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./sw.js").catch(function (error) {
+          console.warn("离线缓存注册失败", error);
+        });
+      });
+    }
+  </script>
+</body></html>`;
+  }
+
+  function printPdf() {
+    const frame = $("printFrame");
+    frame.hidden = false;
+    const documentForPrint = frame.contentWindow.document;
+    documentForPrint.open();
+    documentForPrint.write(printDocumentHTML());
+    documentForPrint.close();
+    setTimeout(() => {
+      try { frame.contentWindow.focus(); frame.contentWindow.print(); }
+      catch (error) { console.error(error); showToast("无法打开打印窗口，请更换浏览器后重试"); }
+    }, 180);
+  }
+
+  function wireEvents() {
+    xlsInput.addEventListener("change", () => importFile(xlsInput.files?.[0]));
+    $("settingsButton").addEventListener("click", openSettings);
+    $("backButton").addEventListener("click", renderHome);
+    $("viewModeButton").addEventListener("click", toggleViewMode);
+    $("autoSortButton").addEventListener("click", autoSortPlan);
+    $("undoButton").addEventListener("click", undo);
+    $("exportButton").addEventListener("click", openExportCheck);
+    $("exportImageButton").addEventListener("click", exportImage);
+    $("openPdfPreviewButton").addEventListener("click", openPdfPreview);
+    $("printPdfButton").addEventListener("click", printPdf);
+    $("batchModeButton").addEventListener("click", toggleBatchMode);
+    $("cancelSelectionButton").addEventListener("click", () => { state.selectedIds.clear(); renderAssignmentPanel(); renderPlanRows(); });
+    $("clearWorkersButton").addEventListener("click", clearAllWorkers);
+    $("resumeDraftButton").addEventListener("click", () => {
+      const draft = loadDraft();
+      if (!draft) return updateDraftButton();
+      state.plan = draft.plan;
+      if (state.settings.groups.some((group) => group.id === draft.todayGroupId)) state.todayGroupId = draft.todayGroupId;
+      state.history = [];
+      state.selectedIds.clear();
+      state.batchMode = false;
+      renderPlan();
+    });
+    $("addPersonForm").addEventListener("submit", addPerson);
+    $("editItemForm").addEventListener("submit", saveEditedItem);
+    $("moveUpButton").addEventListener("click", () => moveEditingItem(-1));
+    $("moveDownButton").addEventListener("click", () => moveEditingItem(1));
+    $("deleteVehicleButton").addEventListener("click", deleteEditingItem);
+    document.querySelectorAll("[data-column-key]").forEach((checkbox) => checkbox.addEventListener("change", () => changeColumnVisibility(checkbox.dataset.columnKey, checkbox.checked)));
+    $("restoreDisplayButton").addEventListener("click", restoreDefaultDisplay);
+    document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => closeDialog($(button.dataset.close))));
+    [settingsDialog, editDialog, exportCheckDialog, imageExportDialog, pdfPreviewDialog].forEach((dialog) => {
+      dialog.addEventListener("click", (event) => { if (event.target === dialog) closeDialog(dialog); });
+    });
+    window.addEventListener("resize", () => { if (state.plan && !planView.hidden) { renderPlanHeader(); renderPlanRows(); } });
+  }
+
+  wireEvents();
+  renderHome();
+})();
+</script>
+</body>
+</html>
