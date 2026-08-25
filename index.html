@@ -418,6 +418,17 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
 .pdf-preview-pages .couple-mark { left: 1px; top: 50%; width: clamp(3px, .8vw, 8px); height: 100%; }
 .pdf-preview-pages .couple-train-mid { top: calc(100% - .65em); padding: 0 .25em; font-size: .52em; line-height: 1.3em; }
 .pdf-preview-pages footer { display: flex; flex: 0 0 4%; align-items: flex-end; justify-content: space-between; color: #7a8798; font-size: clamp(4px, .85vw, 8px); }
+.pdf-preview-pages .pdf-density-compact header { flex-basis: 10%; }
+.pdf-preview-pages .pdf-density-compact table { font-size: clamp(4.5px, 1vw, 8.5px); }
+.pdf-preview-pages .pdf-density-compact td { padding: .25%; }
+.pdf-preview-pages .pdf-density-dense header { flex-basis: 9%; }
+.pdf-preview-pages .pdf-density-dense table { font-size: clamp(4px, .86vw, 7.2px); }
+.pdf-preview-pages .pdf-density-dense th, .pdf-preview-pages .pdf-density-dense td { padding: .18%; }
+.pdf-preview-pages .pdf-density-dense .sequence-badge { width: clamp(7px, 1.5vw, 15px); height: clamp(7px, 1.5vw, 15px); }
+.pdf-preview-pages .pdf-density-ultra header { flex-basis: 8%; }
+.pdf-preview-pages .pdf-density-ultra table { font-size: clamp(3.5px, .72vw, 6px); }
+.pdf-preview-pages .pdf-density-ultra th, .pdf-preview-pages .pdf-density-ultra td { padding: .1%; }
+.pdf-preview-pages .pdf-density-ultra .sequence-badge { width: clamp(6px, 1.2vw, 12px); height: clamp(6px, 1.2vw, 12px); }
 .pdf-preview-footer { position: sticky; bottom: 0; padding: 12px 18px calc(12px + var(--safe-bottom)); border-top: 1px solid var(--soft-line); background: rgba(255,255,255,.96); }
 #printFrame { position: fixed; left: -10px; bottom: -10px; width: 1px; height: 1px; border: 0; opacity: .01; pointer-events: none; }
 
@@ -660,7 +671,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       <div><h2>A4 打印预览</h2><p id="pdfPreviewSummary"></p></div>
       <button class="close-button" data-close="pdfPreviewDialog" type="button" aria-label="关闭">×</button>
     </div>
-    <div class="pdf-preview-help">横向铺满 A4；如果超过一页会自动分页，每页都有标题、表头和页码。</div>
+    <div class="pdf-preview-help">始终按一张横向 A4 排版；车辆越多，行高和字号会自动缩小，确保打印仍为一页。</div>
     <div id="pdfPreviewPages" class="pdf-preview-pages"></div>
     <div class="pdf-preview-footer"><button id="printPdfButton" class="primary-wide" type="button">打开打印 / 存为 PDF</button></div>
   </dialog>
@@ -2711,37 +2722,41 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     return canvas;
   }
 
-  function estimatedRowsPerPdfPage() {
-    const count = visibleColumnOrder().length;
-    if (count >= 8) return 11;
-    if (count === 7) return 12;
-    if (count === 6) return 14;
-    return 16;
-  }
-
   function paginatedPdfItems() {
-    const capacity = estimatedRowsPerPdfPage();
-    const units = [];
-    const handled = new Set();
-    state.plan.items.forEach((item, index) => {
-      if (handled.has(item.id)) return;
-      const matching = item.coupledTrain
-        ? state.plan.items.map((candidate, candidateIndex) => ({ item: candidate, index: candidateIndex })).filter((entry) => entry.item.coupledTrain === item.coupledTrain)
-        : [{ item, index }];
-      matching.forEach((entry) => handled.add(entry.item.id));
-      units.push(matching);
-    });
-    const pages = [];
-    let page = [];
-    units.forEach((unit) => {
-      if (page.length && page.length + unit.length > capacity) { pages.push(page); page = []; }
-      page.push(...unit);
-    });
-    if (page.length || !pages.length) pages.push(page);
-    return pages;
+    return [state.plan.items.map((item, index) => ({ item, index }))];
   }
 
-  function estimatedPdfPages() { return paginatedPdfItems().length; }
+  function estimatedPdfPages() { return 1; }
+
+  function pdfDensity() {
+    const rows = state.plan?.items.length || 0;
+    if (rows >= 29) return "ultra";
+    if (rows >= 23) return "dense";
+    if (rows >= 17) return "compact";
+    return "normal";
+  }
+
+  function pdfLayoutMetrics() {
+    const rows = Math.max(1, state.plan?.items.length || 1);
+    const columnCount = visibleColumnOrder().length;
+    const baseFontSize = columnCount >= 8 ? 9.4 : columnCount >= 7 ? 10 : 10.8;
+    const headerHeight = rows >= 29 ? 10 : rows >= 23 ? 12 : rows >= 17 ? 14 : 18;
+    const tableHeaderHeight = rows >= 29 ? 6.5 : rows >= 23 ? 7.5 : rows >= 17 ? 9 : 11;
+    const availableRowsHeight = 210 - 10 - 9 - headerHeight - tableHeaderHeight - 7;
+    const rowHeight = Math.max(2.8, Math.min(10.6, availableRowsHeight / rows));
+    const fontSize = Math.max(5.2, Math.min(baseFontSize, rowHeight * 1.03));
+    return {
+      rowHeight: rowHeight.toFixed(2),
+      fontSize: fontSize.toFixed(2),
+      headerHeight,
+      tableHeaderHeight,
+      titleFontSize: rows >= 29 ? 13 : rows >= 23 ? 14 : rows >= 17 ? 16 : 18,
+      subtitleFontSize: rows >= 23 ? 7 : 8.8,
+      cellPadding: Math.max(0.2, Math.min(1.2, rowHeight * 0.12)).toFixed(2),
+      sequenceSize: Math.max(3, Math.min(6.5, rowHeight * 0.68)).toFixed(2),
+      vehicleGap: Math.max(0.2, Math.min(1, rowHeight * 0.1)).toFixed(2)
+    };
+  }
 
   function openExportCheck() {
     if (!state.plan?.items.length) return;
@@ -2768,7 +2783,24 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       const safeTitle = displayPlanTitle().replace(/[\\/:*?"<>|]/g, "-");
       const file = new File([blob], `${safeTitle}.png`, { type: "image/png" });
       closeDialog(exportCheckDialog);
-      showExportPreview(blob, `${safeTitle}.png`);
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ title: displayPlanTitle(), files: [file] });
+          showToast("PNG 长图已生成，可选择“存储图像”保存到相册");
+          return;
+        } catch (error) {
+          if (error?.name === "AbortError") return;
+        }
+      }
+      const downloadURL = URL.createObjectURL(blob);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = downloadURL;
+      downloadLink.download = `${safeTitle}.png`;
+      document.body.append(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+      setTimeout(() => URL.revokeObjectURL(downloadURL), 2000);
+      showToast("PNG 长图已保存");
     } catch (error) {
       console.error(error);
       showToast(error?.message || "导出图片失败");
@@ -2821,13 +2853,14 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
   function pdfPagesMarkup() {
     const columns = visibleColumnOrder();
     const pages = paginatedPdfItems();
+    const density = pdfDensity();
     return pages.map((entries, pageIndex) => {
       const head = columns.map((key) => `<th class="col-${key}">${escapeHTML(HEADER_LABELS[key])}</th>`).join("");
       const rows = entries.map(({ item, index }) => {
         const className = item.wheelSetting ? ' class="has-vehicle-detail"' : "";
         return `<tr${className}>${columns.map((key) => `<td class="col-${key}">${pdfCellMarkup(key, item, index)}</td>`).join("")}</tr>`;
       }).join("");
-      return `<section class="pdf-page" data-page="${pageIndex + 1}"><header><h1>${escapeHTML(displayPlanTitle())}</h1><p>${state.plan.items.length}辆一级修</p></header><table data-columns="${columns.length}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table><footer><span></span><strong>第${pageIndex + 1}/${pages.length}页</strong></footer></section>`;
+      return `<section class="pdf-page pdf-density-${density}" data-page="${pageIndex + 1}"><header><h1>${escapeHTML(displayPlanTitle())}</h1><p>${state.plan.items.length}辆一级修</p></header><table data-columns="${columns.length}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table><footer><span></span><strong>第${pageIndex + 1}/${pages.length}页</strong></footer></section>`;
     }).join("");
   }
 
@@ -2840,27 +2873,25 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
   }
 
   function printDocumentHTML() {
-    const columnCount = visibleColumnOrder().length;
-    const fontSize = columnCount >= 8 ? "9.4pt" : columnCount >= 7 ? "10pt" : "10.8pt";
-    const rowHeight = columnCount >= 8 ? "12.6mm" : columnCount >= 6 ? "10.6mm" : "9mm";
+    const metrics = pdfLayoutMetrics();
     return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>${escapeHTML(displayPlanTitle())}</title><style>
       @page { size: A4 landscape; margin: 0; }
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; color: #162033; background: white; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif; }
       .pdf-page { position: relative; width: 297mm; height: 210mm; padding: 10mm 11mm 9mm; overflow: hidden; page-break-after: always; break-after: page; }
       .pdf-page:last-child { page-break-after: auto; break-after: auto; }
-      header { height: 18mm; text-align: center; }
-      h1 { margin: 0; font-size: 18pt; letter-spacing: .02em; }
-      header p { margin: 2.2mm 0 0; color: #66758a; font-size: 8.8pt; }
-      table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: ${fontSize}; }
-      th { height: 11mm; padding: 1.5mm 1mm; color: #334155; border-bottom: .3mm solid #cad6e4; background: #eaf1fa; font-weight: 800; }
+      header { height: ${metrics.headerHeight}mm; text-align: center; }
+      h1 { margin: 0; font-size: ${metrics.titleFontSize}pt; letter-spacing: .02em; }
+      header p { margin: 1.2mm 0 0; color: #66758a; font-size: ${metrics.subtitleFontSize}pt; }
+      table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: ${metrics.fontSize}pt; }
+      th { height: ${metrics.tableHeaderHeight}mm; padding: .7mm 1mm; color: #334155; border-bottom: .3mm solid #cad6e4; background: #eaf1fa; font-weight: 800; }
       th.col-sequence { color: #1769e0; font-size: .9em; }
-      td { position: relative; height: ${rowHeight}; padding: 1.2mm 1mm; border-bottom: .25mm solid #edf1f6; text-align: center; font-weight: 600; overflow: visible; overflow-wrap: anywhere; }
+      td { position: relative; height: ${metrics.rowHeight}mm; padding: ${metrics.cellPadding}mm 1mm; border-bottom: .25mm solid #edf1f6; text-align: center; font-weight: 600; overflow: visible; overflow-wrap: anywhere; }
       tbody tr:nth-child(even) td { background: #fafbfd; }
       .col-sequence { width: 7%; } .col-time { width: 12%; } .col-vehicle { width: 13%; } .col-track { width: 9%; }
       .col-worker { width: 11%; } .col-entryTime { width: 14%; } .col-manualCleaning { width: 34%; }
-      .sequence-badge { display: inline-grid; width: 6.5mm; height: 6.5mm; place-items: center; color: #1769e0; border-radius: 50%; background: #dcecff; font-size: .88em; font-weight: 750; }
-      .vehicle-stack { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1mm; }
+      .sequence-badge { display: inline-grid; width: ${metrics.sequenceSize}mm; height: ${metrics.sequenceSize}mm; place-items: center; color: #1769e0; border-radius: 50%; background: #dcecff; font-size: .88em; font-weight: 750; }
+      .vehicle-stack { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: ${metrics.vehicleGap}mm; }
       .vehicle-number-wrap { position: relative; display: inline-flex; }
       .vehicle-number { font-size: 1.08em; font-weight: 800; }
       .couple-badge { position: absolute; left: calc(100% + .4mm); top: -1.2mm; color: #1769e0; font-size: .55em; font-weight: 850; }
@@ -2928,14 +2959,15 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
   renderHome();
 })();
 </script>
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register("./sw.js").catch(function (error) {
-        console.warn("离线缓存注册失败", error);
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./sw.js").catch(function (error) {
+          console.warn("离线缓存注册失败", error);
+        });
       });
-    });
-  }
-</script>
+    }
+  </script>
 </body>
 </html>
