@@ -284,7 +284,7 @@ button { color: inherit; }
 .selected .sequence-badge::after { content: "✓"; font-size: 14px; }
 .worker-cell { color: #263b58; font-size: 14px; }
 .worker-cell.empty { color: #a3adbb; font-size: 11px; font-weight: 500; }
-.track-cell { font-size: 15px; }
+.track-cell { font-size: 15px; font-weight: 800; }
 .vehicle-stack { display: flex; min-width: 0; align-items: center; justify-content: center; flex-direction: column; gap: 3px; }
 .vehicle-number-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
 .vehicle-number { font-size: 16px; font-weight: 780; line-height: 1; }
@@ -394,26 +394,20 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
 .pdf-preview-dialog { width: min(calc(100% - 14px), 1000px); max-height: 94vh; overflow: auto; }
 .pdf-preview-help { margin: 14px 16px 0; padding: 10px 12px; color: #526177; border-radius: 11px; background: #f0f5fb; font-size: 12px; line-height: 1.5; }
 .pdf-preview-pages { display: flex; align-items: center; flex-direction: column; gap: 14px; padding: 14px; background: #e9edf3; }
-.pdf-preview-pages .pdf-page { position: relative; display: flex; width: 100%; max-width: 900px; aspect-ratio: 297 / 210; flex: 0 0 auto; flex-direction: column; padding: 3% 3.6% 2.8%; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(25,40,64,.15); }
-.pdf-preview-pages header { flex: 0 0 12%; text-align: center; }
+.pdf-preview-pages .pdf-page { position: relative; width: 100%; max-width: 900px; aspect-ratio: 297 / 210; flex: 0 0 auto; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(25,40,64,.15); }
+.pdf-preview-pages header { position: absolute; top: 3%; right: 3.6%; left: 3.6%; height: 10%; text-align: center; }
 .pdf-preview-pages h1 { margin: 0; font-size: clamp(10px, 2.2vw, 21px); }
 .pdf-preview-pages header p { margin: .5% 0 0; color: #66758a; font-size: clamp(5px, 1vw, 9px); }
-.pdf-preview-pages table { display: flex; width: 100%; height: 0; min-height: 0; flex: 1 1 0; flex-direction: column; border: 0; border-spacing: 0; table-layout: fixed; font-size: clamp(5px, 1.15vw, 10px); }
-.pdf-preview-pages thead { display: table; width: 100%; table-layout: fixed; flex: 0 0 7%; }
-.pdf-preview-pages thead tr { display: table; width: 100%; height: 100%; table-layout: fixed; }
-.pdf-preview-pages th { padding: .5%; color: #334155; border-bottom: 1px solid #cad6e4; background: #eaf1fa; }
-.pdf-preview-pages th.col-sequence { color: var(--blue); font-size: .9em; }
-.pdf-preview-pages tbody { display: grid; min-height: 0; flex: 1 1 0; grid-template-rows: repeat(var(--pdf-row-count), minmax(0, 1fr)); }
-.pdf-preview-pages tbody tr { display: table; width: 100%; height: 100%; table-layout: fixed; }
-.pdf-preview-pages td { position: relative; padding: .4%; border-bottom: 1px solid #edf1f6; text-align: center; overflow: visible; overflow-wrap: anywhere; }
-.pdf-preview-pages tbody tr:nth-child(even) td { background: #fafbfd; }
-.pdf-preview-pages .col-sequence { width: 7%; }
-.pdf-preview-pages .col-time { width: 12%; }
-.pdf-preview-pages .col-vehicle { width: 13%; }
-.pdf-preview-pages .col-track { width: 9%; }
-.pdf-preview-pages .col-worker { width: 11%; }
-.pdf-preview-pages .col-entryTime { width: 14%; }
-.pdf-preview-pages .col-manualCleaning { width: 34%; }
+.pdf-preview-pages .pdf-table { position: absolute; top: 15%; right: 3.6%; bottom: 6%; left: 3.6%; font-size: clamp(5px, 1.15vw, 10px); }
+.pdf-preview-pages .pdf-row { display: grid; grid-template-columns: var(--pdf-grid-columns); }
+.pdf-preview-pages .pdf-head { position: absolute; top: 0; right: 0; left: 0; height: 7%; }
+.pdf-preview-pages .pdf-head-cell { padding: .5%; color: #334155; border-bottom: 1px solid #cad6e4; background: #eaf1fa; font-weight: 800; }
+.pdf-preview-pages .pdf-head-cell.col-sequence { color: var(--blue); font-size: .9em; }
+.pdf-preview-pages .pdf-body { position: absolute; top: 7%; right: 0; bottom: 0; left: 0; }
+.pdf-preview-pages .pdf-body .pdf-row { position: absolute; right: 0; left: 0; }
+.pdf-preview-pages .pdf-cell { position: relative; display: flex; min-width: 0; align-items: center; justify-content: center; padding: .4%; border-bottom: 1px solid #edf1f6; text-align: center; overflow: visible; overflow-wrap: anywhere; }
+.pdf-preview-pages .pdf-body .pdf-row:nth-child(even) .pdf-cell { background: #fafbfd; }
+.pdf-preview-pages .pdf-cell.col-track { font-weight: 850; }
 .pdf-preview-pages .sequence-badge { display: inline-grid; width: clamp(8px, 2vw, 20px); height: clamp(8px, 2vw, 20px); place-items: center; font-size: clamp(4px, .9vw, 8px); }
 .pdf-preview-pages .vehicle-stack { gap: clamp(1px, .25vw, 3px); }
 .pdf-preview-pages .vehicle-number { font-size: clamp(5px, 1.1vw, 10px); }
@@ -421,17 +415,17 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
 .pdf-preview-pages .wheel-setting-tag { font-size: clamp(3.5px, .72vw, 7px); }
 .pdf-preview-pages .couple-mark { left: 1px; top: 50%; width: clamp(3px, .8vw, 8px); height: 100%; }
 .pdf-preview-pages .couple-train-mid { top: calc(100% - .65em); padding: 0 .25em; font-size: .52em; line-height: 1.3em; }
-.pdf-preview-pages footer { display: flex; flex: 0 0 4%; align-items: flex-end; justify-content: space-between; color: #7a8798; font-size: clamp(4px, .85vw, 8px); }
-.pdf-preview-pages .pdf-density-compact header { flex-basis: 10%; }
-.pdf-preview-pages .pdf-density-compact table { font-size: clamp(4.5px, 1vw, 8.5px); }
-.pdf-preview-pages .pdf-density-compact td { padding: .25%; }
-.pdf-preview-pages .pdf-density-dense header { flex-basis: 9%; }
-.pdf-preview-pages .pdf-density-dense table { font-size: clamp(4px, .86vw, 7.2px); }
-.pdf-preview-pages .pdf-density-dense th, .pdf-preview-pages .pdf-density-dense td { padding: .18%; }
+.pdf-preview-pages footer { position: absolute; right: 3.6%; bottom: 1.5%; left: 3.6%; display: flex; justify-content: space-between; color: #7a8798; font-size: clamp(4px, .85vw, 8px); }
+.pdf-preview-pages .pdf-density-compact header { height: 9%; }
+.pdf-preview-pages .pdf-density-compact .pdf-table { top: 13%; font-size: clamp(4.5px, 1vw, 8.5px); }
+.pdf-preview-pages .pdf-density-compact .pdf-cell { padding: .25%; }
+.pdf-preview-pages .pdf-density-dense header { height: 8%; }
+.pdf-preview-pages .pdf-density-dense .pdf-table { top: 12%; font-size: clamp(4px, .86vw, 7.2px); }
+.pdf-preview-pages .pdf-density-dense .pdf-head-cell, .pdf-preview-pages .pdf-density-dense .pdf-cell { padding: .18%; }
 .pdf-preview-pages .pdf-density-dense .sequence-badge { width: clamp(7px, 1.5vw, 15px); height: clamp(7px, 1.5vw, 15px); }
-.pdf-preview-pages .pdf-density-ultra header { flex-basis: 8%; }
-.pdf-preview-pages .pdf-density-ultra table { font-size: clamp(3.5px, .72vw, 6px); }
-.pdf-preview-pages .pdf-density-ultra th, .pdf-preview-pages .pdf-density-ultra td { padding: .1%; }
+.pdf-preview-pages .pdf-density-ultra header { height: 7%; }
+.pdf-preview-pages .pdf-density-ultra .pdf-table { top: 11%; font-size: clamp(3.5px, .72vw, 6px); }
+.pdf-preview-pages .pdf-density-ultra .pdf-head-cell, .pdf-preview-pages .pdf-density-ultra .pdf-cell { padding: .1%; }
 .pdf-preview-pages .pdf-density-ultra .sequence-badge { width: clamp(6px, 1.2vw, 12px); height: clamp(6px, 1.2vw, 12px); }
 .pdf-preview-footer { position: sticky; bottom: 0; padding: 12px 18px calc(12px + var(--safe-bottom)); border-top: 1px solid var(--soft-line); background: rgba(255,255,255,.96); }
 #printFrame { position: fixed; left: -10px; bottom: -10px; width: 1px; height: 1px; border: 0; opacity: .01; pointer-events: none; }
@@ -2684,7 +2678,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
         } else if (column.key === "time") drawCenteredText(context, core.formatTime(item.startMs), column, centerY, "760 15px -apple-system, PingFang SC, Arial");
         else if (column.key === "entryTime") drawCenteredText(context, core.formatTime(item.entryStartMs) || "—", column, centerY, "650 12px -apple-system, PingFang SC, Arial", item.entryStartMs === null ? "#9aa5b4" : "#162033");
         else if (column.key === "vehicle") drawCanvasVehicle(context, item, column, centerY);
-        else if (column.key === "track") drawCenteredText(context, item.track, column, centerY, "650 14px -apple-system, PingFang SC, Arial");
+        else if (column.key === "track") drawCenteredText(context, item.track, column, centerY, "800 14px -apple-system, PingFang SC, Arial");
         else if (column.key === "worker") drawCenteredText(context, memberName(item.workerId), column, centerY, "650 13px -apple-system, PingFang SC, Arial");
         else if (column.key === "manualCleaning") drawCenteredText(context, item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—", column, centerY, "700 10px -apple-system, PingFang SC, Arial", item.manualCleaning ? "#0d53bc" : "#9aa5b4");
       });
@@ -2746,7 +2740,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     const baseFontSize = columnCount >= 8 ? 9.4 : columnCount >= 7 ? 10 : 10.8;
     const headerHeight = rows >= 29 ? 10 : rows >= 23 ? 12 : rows >= 17 ? 14 : 18;
     const tableHeaderHeight = rows >= 29 ? 6.5 : rows >= 23 ? 7.5 : rows >= 17 ? 9 : 11;
-    const availableRowsHeight = 210 - 10 - 9 - headerHeight - tableHeaderHeight - 7;
+    const availableRowsHeight = 210 - 5 - 9 - headerHeight - tableHeaderHeight;
     const rowHeight = Math.max(2.8, availableRowsHeight / rows);
     const fontSize = Math.max(5.2, Math.min(baseFontSize, rowHeight * 1.03));
     return {
@@ -2859,12 +2853,16 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     const pages = paginatedPdfItems();
     const density = pdfDensity();
     return pages.map((entries, pageIndex) => {
-      const head = columns.map((key) => `<th class="col-${key}">${escapeHTML(HEADER_LABELS[key])}</th>`).join("");
-      const rows = entries.map(({ item, index }) => {
-        const className = item.wheelSetting ? ' class="has-vehicle-detail"' : "";
-        return `<tr${className}>${columns.map((key) => `<td class="col-${key}">${pdfCellMarkup(key, item, index)}</td>`).join("")}</tr>`;
+      const rowCount = Math.max(1, entries.length);
+      const gridTemplate = columns.map((key) => `minmax(0, ${COLUMN_WEIGHTS[key]}fr)`).join(" ");
+      const head = columns.map((key) => `<div class="pdf-cell pdf-head-cell col-${key}">${escapeHTML(HEADER_LABELS[key])}</div>`).join("");
+      const rows = entries.map(({ item, index }, rowIndex) => {
+        const className = item.wheelSetting ? " has-vehicle-detail" : "";
+        const top = (rowIndex * 100 / rowCount).toFixed(6);
+        const height = (100 / rowCount).toFixed(6);
+        return `<div class="pdf-row${className}" data-row-index="${rowIndex}" style="top:${top}%;height:${height}%">${columns.map((key) => `<div class="pdf-cell col-${key}">${pdfCellMarkup(key, item, index)}</div>`).join("")}</div>`;
       }).join("");
-      return `<section class="pdf-page pdf-density-${density}" data-page="${pageIndex + 1}" style="--pdf-row-count:${Math.max(1, entries.length)}"><header><h1>${escapeHTML(displayPlanTitle())}</h1><p>${state.plan.items.length}辆一级修</p></header><table data-columns="${columns.length}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table><footer><span></span><strong>第${pageIndex + 1}/${pages.length}页</strong></footer></section>`;
+      return `<section class="pdf-page pdf-density-${density}" data-page="${pageIndex + 1}" style="--pdf-row-count:${rowCount};--pdf-grid-columns:${gridTemplate}"><header><h1>${escapeHTML(displayPlanTitle())}</h1><p>${state.plan.items.length}辆一级修</p></header><div class="pdf-table" data-columns="${columns.length}"><div class="pdf-head pdf-row">${head}</div><div class="pdf-body">${rows}</div></div><footer><span></span><strong>第${pageIndex + 1}/${pages.length}页</strong></footer></section>`;
     }).join("");
   }
 
@@ -2878,26 +2876,26 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
 
   function printDocumentHTML() {
     const metrics = pdfLayoutMetrics();
+    const tableTop = 5 + metrics.headerHeight;
     return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>${escapeHTML(displayPlanTitle())}</title><style>
       @page { size: A4 landscape; margin: 0; }
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; color: #162033; background: white; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif; }
-      .pdf-page { position: relative; display: flex; width: 297mm; height: 210mm; flex-direction: column; padding: 10mm 11mm 9mm; overflow: hidden; page-break-after: always; break-after: page; }
+      .pdf-page { position: relative; width: 297mm; height: 210mm; overflow: hidden; page-break-after: always; break-after: page; }
       .pdf-page:last-child { page-break-after: auto; break-after: auto; }
-      header { height: ${metrics.headerHeight}mm; text-align: center; }
+      header { position: absolute; top: 5mm; right: 8.5mm; left: 8.5mm; height: ${metrics.headerHeight}mm; text-align: center; }
       h1 { margin: 0; font-size: ${metrics.titleFontSize}pt; letter-spacing: .02em; }
       header p { margin: 1.2mm 0 0; color: #66758a; font-size: ${metrics.subtitleFontSize}pt; }
-      table { display: flex; width: 100%; height: 0; min-height: 0; flex: 1 1 0; flex-direction: column; margin: 0 0 7mm; border: 0; border-spacing: 0; table-layout: fixed; font-size: ${metrics.fontSize}pt; }
-      thead { display: table; width: 100%; table-layout: fixed; flex: 0 0 ${metrics.tableHeaderHeight}mm; }
-      thead tr { display: table; width: 100%; height: ${metrics.tableHeaderHeight}mm; table-layout: fixed; }
-      th { height: ${metrics.tableHeaderHeight}mm; padding: .7mm 1mm; color: #334155; border-bottom: .3mm solid #cad6e4; background: #eaf1fa; font-weight: 800; }
-      th.col-sequence { color: #1769e0; font-size: .9em; }
-      tbody { display: grid; min-height: 0; flex: 1 1 0; grid-template-rows: repeat(var(--pdf-row-count), minmax(0, 1fr)); }
-      tbody tr { display: table; width: 100%; height: 100%; table-layout: fixed; }
-      td { position: relative; height: auto; padding: ${metrics.cellPadding}mm 1mm; border-bottom: .25mm solid #edf1f6; text-align: center; vertical-align: middle; font-weight: 600; overflow: visible; overflow-wrap: anywhere; }
-      tbody tr:nth-child(even) td { background: #fafbfd; }
-      .col-sequence { width: 7%; } .col-time { width: 12%; } .col-vehicle { width: 13%; } .col-track { width: 9%; }
-      .col-worker { width: 11%; } .col-entryTime { width: 14%; } .col-manualCleaning { width: 34%; }
+      .pdf-table { position: absolute; top: ${tableTop}mm; right: 8.5mm; bottom: 9mm; left: 8.5mm; font-size: ${metrics.fontSize}pt; }
+      .pdf-row { display: grid; grid-template-columns: var(--pdf-grid-columns); }
+      .pdf-head { position: absolute; top: 0; right: 0; left: 0; height: ${metrics.tableHeaderHeight}mm; }
+      .pdf-head-cell { padding: .7mm 1mm; color: #334155; border-bottom: .3mm solid #cad6e4; background: #eaf1fa; font-weight: 800; }
+      .pdf-head-cell.col-sequence { color: #1769e0; font-size: .9em; }
+      .pdf-body { position: absolute; top: ${metrics.tableHeaderHeight}mm; right: 0; bottom: 0; left: 0; }
+      .pdf-body .pdf-row { position: absolute; right: 0; left: 0; }
+      .pdf-cell { position: relative; display: flex; min-width: 0; align-items: center; justify-content: center; padding: ${metrics.cellPadding}mm 1mm; border-bottom: .25mm solid #edf1f6; text-align: center; font-weight: 600; overflow: visible; overflow-wrap: anywhere; }
+      .pdf-body .pdf-row:nth-child(even) .pdf-cell { background: #fafbfd; }
+      .pdf-cell.col-track { font-weight: 850; }
       .sequence-badge { display: inline-grid; width: ${metrics.sequenceSize}mm; height: ${metrics.sequenceSize}mm; place-items: center; color: #1769e0; border-radius: 50%; background: #dcecff; font-size: .88em; font-weight: 750; }
       .vehicle-stack { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: ${metrics.vehicleGap}mm; }
       .vehicle-number-wrap { position: relative; display: inline-flex; }
@@ -2907,7 +2905,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       .couple-mark { position: absolute; z-index: 3; left: 1mm; top: 50%; width: 3.2mm; height: 100%; overflow: visible; }
       .couple-mark path { fill: none; stroke: #111827; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
       .couple-train-mid { position: absolute; z-index: 4; left: 50%; top: calc(100% - 1.6mm); padding: 0 .8mm; color: #617086; background: white; font-size: .58em; font-weight: 650; line-height: 3.2mm; white-space: nowrap; transform: translateX(-50%); }
-      footer { position: absolute; right: 11mm; bottom: 4mm; left: 11mm; display: flex; justify-content: space-between; color: #7a8798; font-size: 7.5pt; }
+      footer { position: absolute; right: 8.5mm; bottom: 3mm; left: 8.5mm; display: flex; justify-content: space-between; color: #7a8798; font-size: 7.5pt; }
       footer strong { color: #4f5f73; }
     </style></head><body>${pdfPagesMarkup()}</body></html>`;
   }
