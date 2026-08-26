@@ -398,9 +398,10 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
 .pdf-preview-pages header { flex: 0 0 12%; text-align: center; }
 .pdf-preview-pages h1 { margin: 0; font-size: clamp(10px, 2.2vw, 21px); }
 .pdf-preview-pages header p { margin: .5% 0 0; color: #66758a; font-size: clamp(5px, 1vw, 9px); }
-.pdf-preview-pages table { width: 100%; flex: 1; border-collapse: collapse; table-layout: fixed; font-size: clamp(5px, 1.15vw, 10px); }
+.pdf-preview-pages table { width: 100%; height: 84%; flex: 0 0 84%; border-collapse: collapse; table-layout: fixed; font-size: clamp(5px, 1.15vw, 10px); }
 .pdf-preview-pages th { padding: .5%; color: #334155; border-bottom: 1px solid #cad6e4; background: #eaf1fa; }
 .pdf-preview-pages th.col-sequence { color: var(--blue); font-size: .9em; }
+.pdf-preview-pages tbody tr { height: calc(100% / var(--pdf-row-count, 1)); }
 .pdf-preview-pages td { position: relative; padding: .4%; border-bottom: 1px solid #edf1f6; text-align: center; overflow: visible; overflow-wrap: anywhere; }
 .pdf-preview-pages tbody tr:nth-child(even) td { background: #fafbfd; }
 .pdf-preview-pages .col-sequence { width: 7%; }
@@ -419,13 +420,16 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
 .pdf-preview-pages .couple-train-mid { top: calc(100% - .65em); padding: 0 .25em; font-size: .52em; line-height: 1.3em; }
 .pdf-preview-pages footer { display: flex; flex: 0 0 4%; align-items: flex-end; justify-content: space-between; color: #7a8798; font-size: clamp(4px, .85vw, 8px); }
 .pdf-preview-pages .pdf-density-compact header { flex-basis: 10%; }
+.pdf-preview-pages .pdf-density-compact table { height: 86%; flex-basis: 86%; }
 .pdf-preview-pages .pdf-density-compact table { font-size: clamp(4.5px, 1vw, 8.5px); }
 .pdf-preview-pages .pdf-density-compact td { padding: .25%; }
 .pdf-preview-pages .pdf-density-dense header { flex-basis: 9%; }
+.pdf-preview-pages .pdf-density-dense table { height: 87%; flex-basis: 87%; }
 .pdf-preview-pages .pdf-density-dense table { font-size: clamp(4px, .86vw, 7.2px); }
 .pdf-preview-pages .pdf-density-dense th, .pdf-preview-pages .pdf-density-dense td { padding: .18%; }
 .pdf-preview-pages .pdf-density-dense .sequence-badge { width: clamp(7px, 1.5vw, 15px); height: clamp(7px, 1.5vw, 15px); }
 .pdf-preview-pages .pdf-density-ultra header { flex-basis: 8%; }
+.pdf-preview-pages .pdf-density-ultra table { height: 88%; flex-basis: 88%; }
 .pdf-preview-pages .pdf-density-ultra table { font-size: clamp(3.5px, .72vw, 6px); }
 .pdf-preview-pages .pdf-density-ultra th, .pdf-preview-pages .pdf-density-ultra td { padding: .1%; }
 .pdf-preview-pages .pdf-density-ultra .sequence-badge { width: clamp(6px, 1.2vw, 12px); height: clamp(6px, 1.2vw, 12px); }
@@ -2747,6 +2751,8 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     const fontSize = Math.max(5.2, Math.min(baseFontSize, rowHeight * 1.03));
     return {
       rowHeight: rowHeight.toFixed(2),
+      tableHeight: (tableHeaderHeight + availableRowsHeight).toFixed(2),
+      rowsHeight: availableRowsHeight.toFixed(2),
       fontSize: fontSize.toFixed(2),
       headerHeight,
       tableHeaderHeight,
@@ -2860,7 +2866,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
         const className = item.wheelSetting ? ' class="has-vehicle-detail"' : "";
         return `<tr${className}>${columns.map((key) => `<td class="col-${key}">${pdfCellMarkup(key, item, index)}</td>`).join("")}</tr>`;
       }).join("");
-      return `<section class="pdf-page pdf-density-${density}" data-page="${pageIndex + 1}"><header><h1>${escapeHTML(displayPlanTitle())}</h1><p>${state.plan.items.length}辆一级修</p></header><table data-columns="${columns.length}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table><footer><span></span><strong>第${pageIndex + 1}/${pages.length}页</strong></footer></section>`;
+      return `<section class="pdf-page pdf-density-${density}" data-page="${pageIndex + 1}" style="--pdf-row-count:${Math.max(1, entries.length)}"><header><h1>${escapeHTML(displayPlanTitle())}</h1><p>${state.plan.items.length}辆一级修</p></header><table data-columns="${columns.length}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table><footer><span></span><strong>第${pageIndex + 1}/${pages.length}页</strong></footer></section>`;
     }).join("");
   }
 
@@ -2883,9 +2889,11 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       header { height: ${metrics.headerHeight}mm; text-align: center; }
       h1 { margin: 0; font-size: ${metrics.titleFontSize}pt; letter-spacing: .02em; }
       header p { margin: 1.2mm 0 0; color: #66758a; font-size: ${metrics.subtitleFontSize}pt; }
-      table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: ${metrics.fontSize}pt; }
+      table { width: 100%; height: ${metrics.tableHeight}mm; border-collapse: collapse; table-layout: fixed; font-size: ${metrics.fontSize}pt; }
       th { height: ${metrics.tableHeaderHeight}mm; padding: .7mm 1mm; color: #334155; border-bottom: .3mm solid #cad6e4; background: #eaf1fa; font-weight: 800; }
       th.col-sequence { color: #1769e0; font-size: .9em; }
+      tbody { height: ${metrics.rowsHeight}mm; }
+      tbody tr { height: ${metrics.rowHeight}mm; }
       td { position: relative; height: ${metrics.rowHeight}mm; padding: ${metrics.cellPadding}mm 1mm; border-bottom: .25mm solid #edf1f6; text-align: center; font-weight: 600; overflow: visible; overflow-wrap: anywhere; }
       tbody tr:nth-child(even) td { background: #fafbfd; }
       .col-sequence { width: 7%; } .col-time { width: 12%; } .col-vehicle { width: 13%; } .col-track { width: 9%; }
