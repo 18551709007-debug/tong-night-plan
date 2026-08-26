@@ -2743,7 +2743,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     const headerHeight = rows >= 29 ? 10 : rows >= 23 ? 12 : rows >= 17 ? 14 : 18;
     const tableHeaderHeight = rows >= 29 ? 6.5 : rows >= 23 ? 7.5 : rows >= 17 ? 9 : 11;
     const availableRowsHeight = 210 - 10 - 9 - headerHeight - tableHeaderHeight - 7;
-    const rowHeight = Math.max(2.8, Math.min(10.6, availableRowsHeight / rows));
+    const rowHeight = Math.max(2.8, availableRowsHeight / rows);
     const fontSize = Math.max(5.2, Math.min(baseFontSize, rowHeight * 1.03));
     return {
       rowHeight: rowHeight.toFixed(2),
