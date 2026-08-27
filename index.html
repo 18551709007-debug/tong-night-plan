@@ -394,6 +394,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
 .pdf-preview-dialog { width: min(calc(100% - 14px), 1000px); max-height: 94vh; overflow: auto; }
 .pdf-preview-help { margin: 14px 16px 0; padding: 10px 12px; color: #526177; border-radius: 11px; background: #f0f5fb; font-size: 12px; line-height: 1.5; }
 .pdf-preview-pages { display: flex; align-items: center; flex-direction: column; gap: 14px; padding: 14px; background: #e9edf3; }
+.pdf-canvas-preview { display: block; width: 100%; max-width: 900px; height: auto; aspect-ratio: 1122 / 794; background: #fff; box-shadow: 0 8px 24px rgba(25,40,64,.15); }
 .pdf-preview-pages .pdf-page { position: relative; width: 100%; max-width: 900px; aspect-ratio: 297 / 210; flex: 0 0 auto; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(25,40,64,.15); }
 .pdf-preview-pages header { position: absolute; top: 3%; right: 3.6%; left: 3.6%; height: 10%; text-align: center; }
 .pdf-preview-pages h1 { margin: 0; font-size: clamp(10px, 2.2vw, 21px); }
@@ -427,7 +428,8 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
 .pdf-preview-pages .pdf-density-ultra .pdf-table { top: 11%; font-size: clamp(3.5px, .72vw, 6px); }
 .pdf-preview-pages .pdf-density-ultra .pdf-head-cell, .pdf-preview-pages .pdf-density-ultra .pdf-cell { padding: .1%; }
 .pdf-preview-pages .pdf-density-ultra .sequence-badge { width: clamp(6px, 1.2vw, 12px); height: clamp(6px, 1.2vw, 12px); }
-.pdf-preview-footer { position: sticky; bottom: 0; padding: 12px 18px calc(12px + var(--safe-bottom)); border-top: 1px solid var(--soft-line); background: rgba(255,255,255,.96); }
+.pdf-preview-footer { position: sticky; bottom: 0; display: grid; gap: 9px; padding: 12px 18px calc(12px + var(--safe-bottom)); border-top: 1px solid var(--soft-line); background: rgba(255,255,255,.96); }
+.pdf-download-link { text-decoration: none; }
 #printFrame { position: fixed; left: -10px; bottom: -10px; width: 1px; height: 1px; border: 0; opacity: .01; pointer-events: none; }
 
 .toast { position: fixed; z-index: 100; left: 50%; bottom: calc(24px + var(--safe-bottom)); max-width: calc(100% - 40px); padding: 10px 15px; color: white; border-radius: 999px; background: rgba(24, 34, 50, .92); box-shadow: 0 10px 30px rgba(0,0,0,.18); font-size: 12px; line-height: 1.3; opacity: 0; pointer-events: none; transform: translate(-50%, 12px); transition: .22s ease; }
@@ -669,9 +671,12 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       <div><h2>A4 打印预览</h2><p id="pdfPreviewSummary"></p></div>
       <button class="close-button" data-close="pdfPreviewDialog" type="button" aria-label="关闭">×</button>
     </div>
-    <div class="pdf-preview-help">始终按一张横向 A4 排版；车辆越多，行高和字号会自动缩小，确保打印仍为一页。</div>
+    <div class="pdf-preview-help">直接生成一张固定横向 A4 PDF，不再使用 Safari 网页打印缩放；所有车辆平均铺满整页高度。</div>
     <div id="pdfPreviewPages" class="pdf-preview-pages"></div>
-    <div class="pdf-preview-footer"><button id="printPdfButton" class="primary-wide" type="button">打开打印 / 存为 PDF</button></div>
+    <div class="pdf-preview-footer">
+      <button id="printPdfButton" class="primary-wide" type="button">生成并打开横向 A4 PDF</button>
+      <a id="pdfDownloadLink" class="primary-wide pdf-download-link" target="_blank" rel="noopener" hidden>打开已生成 PDF</a>
+    </div>
   </dialog>
 
   <iframe id="printFrame" title="PDF 打印内容" hidden></iframe>
@@ -1732,7 +1737,8 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     batchMode: false,
     editingId: null,
     drag: null,
-    exportURL: null
+    exportURL: null,
+    pdfURL: null
   };
   state.todayGroupId = state.settings.lastGroupId || state.settings.groups[0].id;
 
@@ -2720,6 +2726,215 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     return canvas;
   }
 
+  function drawPdfVehicle(context, item, column, centerY, rowHeight, fontSize) {
+    const number = item.vehicleNumber || "待确认";
+    const numberY = item.wheelSetting ? centerY - Math.min(rowHeight * .15, 6) : centerY;
+    context.font = `800 ${fontSize}px -apple-system, PingFang SC, Arial`;
+    const fittedNumber = fitCanvasText(context, number, column.width - 14);
+    const numberWidth = context.measureText(fittedNumber).width;
+    const numberX = column.x + (column.width - numberWidth) / 2;
+    context.fillStyle = "#162033";
+    context.textAlign = "left";
+    context.textBaseline = "middle";
+    context.fillText(fittedNumber, numberX, numberY);
+    if (item.coupledTrain) {
+      context.font = `850 ${Math.max(5.5, fontSize * .52)}px -apple-system, PingFang SC, Arial`;
+      context.fillStyle = "#1769e0";
+      context.fillText("联", numberX + numberWidth + 1, numberY - fontSize * .58);
+    }
+    if (item.wheelSetting) {
+      drawCenteredText(
+        context,
+        "轮径设定",
+        column,
+        centerY + Math.min(rowHeight * .2, 8),
+        `750 ${Math.max(5.5, fontSize * .62)}px -apple-system, PingFang SC, Arial`,
+        "#0d53bc"
+      );
+    }
+  }
+
+  function renderPdfCanvas() {
+    const logicalWidth = 1122;
+    const logicalHeight = 794;
+    const outputScale = 2;
+    const canvas = document.createElement("canvas");
+    canvas.width = logicalWidth * outputScale;
+    canvas.height = logicalHeight * outputScale;
+    const context = canvas.getContext("2d", { alpha: false });
+    context.scale(outputScale, outputScale);
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, logicalWidth, logicalHeight);
+
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillStyle = "#111827";
+    context.font = "800 25px -apple-system, PingFang SC, Arial";
+    context.fillText(displayPlanTitle(), logicalWidth / 2, 27);
+    context.fillStyle = "#66758a";
+    context.font = "650 11px -apple-system, PingFang SC, Arial";
+    context.fillText(`${state.plan.items.length}辆一级修`, logicalWidth / 2, 51);
+
+    const tableX = 32;
+    const tableWidth = logicalWidth - tableX * 2;
+    const tableTop = 70;
+    const tableHeaderHeight = 42;
+    const tableBottom = 764;
+    const bodyTop = tableTop + tableHeaderHeight;
+    const bodyHeight = tableBottom - bodyTop;
+    const rowCount = Math.max(1, state.plan.items.length);
+    const rowHeight = bodyHeight / rowCount;
+    const bodyFontSize = Math.max(8.5, Math.min(18, rowHeight * .38));
+    const columns = canvasColumns(tableX, tableWidth);
+
+    context.fillStyle = "#eaf1fa";
+    context.fillRect(tableX, tableTop, tableWidth, tableHeaderHeight);
+    columns.forEach((column) => {
+      drawCenteredText(
+        context,
+        HEADER_LABELS[column.key],
+        column,
+        tableTop + tableHeaderHeight / 2,
+        `800 ${column.key === "sequence" ? 11 : 13}px -apple-system, PingFang SC, Arial`,
+        column.key === "sequence" ? "#1769e0" : "#334155"
+      );
+    });
+
+    state.plan.items.forEach((item, index) => {
+      const y = bodyTop + index * rowHeight;
+      const centerY = y + rowHeight / 2;
+      if (index % 2 === 1) {
+        context.fillStyle = "#fafbfd";
+        context.fillRect(tableX, y, tableWidth, rowHeight);
+      }
+      columns.forEach((column) => {
+        if (column.key === "sequence") {
+          const radius = Math.max(6, Math.min(13, rowHeight * .28));
+          context.fillStyle = "#dcecff";
+          context.beginPath();
+          context.arc(column.x + column.width / 2, centerY, radius, 0, Math.PI * 2);
+          context.fill();
+          drawCenteredText(context, String(index + 1), column, centerY, `750 ${Math.max(7, bodyFontSize * .86)}px ui-rounded, -apple-system, PingFang SC, Arial`, "#1769e0");
+        } else if (column.key === "time") {
+          drawCenteredText(context, core.formatTime(item.startMs), column, centerY, `760 ${bodyFontSize}px -apple-system, PingFang SC, Arial`);
+        } else if (column.key === "entryTime") {
+          drawCenteredText(context, core.formatTime(item.entryStartMs) || "—", column, centerY, `650 ${bodyFontSize * .92}px -apple-system, PingFang SC, Arial`, item.entryStartMs === null ? "#9aa5b4" : "#162033");
+        } else if (column.key === "vehicle") {
+          drawPdfVehicle(context, item, column, centerY, rowHeight, bodyFontSize);
+        } else if (column.key === "track") {
+          drawCenteredText(context, item.track, column, centerY, `850 ${bodyFontSize}px -apple-system, PingFang SC, Arial`);
+        } else if (column.key === "worker") {
+          drawCenteredText(context, memberName(item.workerId), column, centerY, `650 ${bodyFontSize * .92}px -apple-system, PingFang SC, Arial`);
+        } else if (column.key === "manualCleaning") {
+          drawCenteredText(context, item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—", column, centerY, `750 ${Math.max(7, bodyFontSize * .78)}px -apple-system, PingFang SC, Arial`, item.manualCleaning ? "#0d53bc" : "#9aa5b4");
+        }
+      });
+    });
+
+    context.strokeStyle = "#d5dde8";
+    context.lineWidth = 1;
+    for (let index = 0; index <= rowCount; index += 1) {
+      const y = bodyTop + index * rowHeight;
+      context.beginPath();
+      context.moveTo(tableX, y);
+      context.lineTo(tableX + tableWidth, y);
+      context.stroke();
+    }
+    context.strokeStyle = "#bfcbd9";
+    context.lineWidth = 1.2;
+    context.strokeRect(tableX, tableTop, tableWidth, tableBottom - tableTop);
+
+    const vehicleColumn = columns.find((column) => column.key === "vehicle");
+    if (vehicleColumn) state.plan.items.forEach((item, index) => {
+      if (!core.rowsAreConnected(state.plan.items, index)) return;
+      const upperCenter = bodyTop + index * rowHeight + rowHeight / 2;
+      const boundary = bodyTop + (index + 1) * rowHeight;
+      const right = vehicleColumn.x + 8;
+      const point = vehicleColumn.x + 1;
+      context.strokeStyle = "#111827";
+      context.lineWidth = 2.4;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      context.beginPath();
+      context.moveTo(right, upperCenter - 2);
+      context.lineTo(point, boundary);
+      context.lineTo(right, upperCenter + rowHeight + 2);
+      context.stroke();
+      const firstCoupledIndex = state.plan.items.findIndex((candidate) => candidate.coupledTrain === item.coupledTrain);
+      if (firstCoupledIndex === index && item.coupledTrain) {
+        context.font = `650 ${Math.max(5.5, bodyFontSize * .55)}px -apple-system, PingFang SC, Arial`;
+        const train = fitCanvasText(context, item.coupledTrain, vehicleColumn.width - 12);
+        const trainWidth = context.measureText(train).width;
+        context.fillStyle = "#ffffff";
+        context.fillRect(vehicleColumn.x + (vehicleColumn.width - trainWidth) / 2 - 3, boundary - 6, trainWidth + 6, 12);
+        context.fillStyle = "#617086";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(train, vehicleColumn.x + vehicleColumn.width / 2, boundary);
+      }
+    });
+
+    context.fillStyle = "#66758a";
+    context.font = "650 9px -apple-system, PingFang SC, Arial";
+    context.textAlign = "right";
+    context.fillText("第1/1页", logicalWidth - tableX, 782);
+    return canvas;
+  }
+
+  function concatBytes(parts) {
+    const length = parts.reduce((sum, part) => sum + part.length, 0);
+    const result = new Uint8Array(length);
+    let offset = 0;
+    parts.forEach((part) => { result.set(part, offset); offset += part.length; });
+    return result;
+  }
+
+  function imagePdfBlob(jpegBytes, imageWidth, imageHeight) {
+    const encode = (text) => new TextEncoder().encode(text);
+    const pageWidth = "841.89";
+    const pageHeight = "595.28";
+    const imageObject = concatBytes([
+      encode(`<< /Type /XObject /Subtype /Image /Width ${imageWidth} /Height ${imageHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`),
+      jpegBytes,
+      encode("\nendstream")
+    ]);
+    const content = encode(`q\n${pageWidth} 0 0 ${pageHeight} 0 0 cm\n/Im0 Do\nQ\n`);
+    const objects = [
+      null,
+      encode("<< /Type /Catalog /Pages 2 0 R >>"),
+      encode("<< /Type /Pages /Kids [3 0 R] /Count 1 >>"),
+      encode(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`),
+      imageObject,
+      concatBytes([encode(`<< /Length ${content.length} >>\nstream\n`), content, encode("endstream")])
+    ];
+    const chunks = [encode("%PDF-1.4\n")];
+    const offsets = [0];
+    let offset = chunks[0].length;
+    for (let index = 1; index < objects.length; index += 1) {
+      offsets[index] = offset;
+      const object = concatBytes([encode(`${index} 0 obj\n`), objects[index], encode("\nendobj\n")]);
+      chunks.push(object);
+      offset += object.length;
+    }
+    const xrefOffset = offset;
+    const xref = ["xref", `0 ${objects.length}`, "0000000000 65535 f "];
+    for (let index = 1; index < objects.length; index += 1) xref.push(`${String(offsets[index]).padStart(10, "0")} 00000 n `);
+    chunks.push(encode(`${xref.join("\n")}\ntrailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`));
+    return new Blob(chunks, { type: "application/pdf" });
+  }
+
+  function canvasToPdfBlob(canvas) {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(async (jpegBlob) => {
+        if (!jpegBlob) return reject(new Error("无法生成 PDF 图片"));
+        try {
+          const bytes = new Uint8Array(await jpegBlob.arrayBuffer());
+          resolve(imagePdfBlob(bytes, canvas.width, canvas.height));
+        } catch (error) { reject(error); }
+      }, "image/jpeg", .96);
+    });
+  }
+
   function paginatedPdfItems() {
     return [state.plan.items.map((item, index) => ({ item, index }))];
   }
@@ -2870,7 +3085,12 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     closeDialog(exportCheckDialog);
     const pages = estimatedPdfPages();
     $("pdfPreviewSummary").textContent = `预计 ${pages} 页 · ${visibleColumnOrder().length} 列 · ${state.plan.items.length} 辆`;
-    $("pdfPreviewPages").innerHTML = pdfPagesMarkup();
+    const previewCanvas = renderPdfCanvas();
+    const previewImage = new Image();
+    previewImage.className = "pdf-canvas-preview";
+    previewImage.alt = "最终横向 A4 PDF 实际画面";
+    previewImage.src = previewCanvas.toDataURL("image/jpeg", .96);
+    $("pdfPreviewPages").replaceChildren(previewImage);
     showDialog(pdfPreviewDialog);
   }
 
@@ -2910,17 +3130,32 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     </style></head><body>${pdfPagesMarkup()}</body></html>`;
   }
 
-  function printPdf() {
-    const frame = $("printFrame");
-    frame.hidden = false;
-    const documentForPrint = frame.contentWindow.document;
-    documentForPrint.open();
-    documentForPrint.write(printDocumentHTML());
-    documentForPrint.close();
-    setTimeout(() => {
-      try { frame.contentWindow.focus(); frame.contentWindow.print(); }
-      catch (error) { console.error(error); showToast("无法打开打印窗口，请更换浏览器后重试"); }
-    }, 180);
+  async function printPdf() {
+    const button = $("printPdfButton");
+    const downloadLink = $("pdfDownloadLink");
+    const pdfWindow = window.open("", "_blank");
+    if (pdfWindow) pdfWindow.document.write('<meta name="viewport" content="width=device-width"><p style="font:16px -apple-system;padding:24px">正在生成横向 A4 PDF……</p>');
+    button.disabled = true;
+    const originalText = button.textContent;
+    button.textContent = "正在生成横向 A4 PDF…";
+    try {
+      const blob = await canvasToPdfBlob(renderPdfCanvas());
+      if (state.pdfURL) URL.revokeObjectURL(state.pdfURL);
+      state.pdfURL = URL.createObjectURL(blob);
+      const fileName = `${displayPlanTitle().replace(/[\\/:*?"<>|]/g, "-")}.pdf`;
+      downloadLink.href = state.pdfURL;
+      downloadLink.download = fileName;
+      downloadLink.hidden = false;
+      if (pdfWindow && !pdfWindow.closed) pdfWindow.location.replace(state.pdfURL);
+      else showToast("PDF 已生成，请点击下方“打开已生成 PDF”");
+    } catch (error) {
+      console.error(error);
+      if (pdfWindow && !pdfWindow.closed) pdfWindow.close();
+      showToast("PDF 生成失败，请重试");
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
   }
 
   function wireEvents() {
