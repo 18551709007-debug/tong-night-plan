@@ -278,6 +278,7 @@ button { color: inherit; }
 .entryTime-cell.empty { color: #a3adbb; font-weight: 500; }
 .manualCleaning-cell { color: #a3adbb; font-size: 11px; }
 .manualCleaning-cell.yes { color: var(--blue-dark); font-weight: 800; }
+.cleaning-stack { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1px; white-space: nowrap; }
 .sequence-cell { color: var(--blue); font-size: 12px; font-weight: 750; }
 .sequence-badge { display: grid; place-items: center; width: 28px; height: 28px; color: var(--blue); border-radius: 50%; background: #dcecff; font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "PingFang SC", sans-serif; font-size: 13px; font-weight: 700; }
 .selected .sequence-badge { color: white; background: var(--blue); font-size: 0; }
@@ -1663,10 +1664,16 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     return `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
   }
 
-  function formatCleaningText(item) {
-    if (!item || !item.manualCleaning) return "—";
+  function formatCleaningParts(item) {
+    if (!item || !item.manualCleaning) return null;
     const label = item.cleaningTrackLabel === "10道洗车" ? "10道洗车" : "20道洗车";
-    return `${label} ${formatCleaningTime(item.manualCleaningStartMs)}-${formatCleaningTime(item.manualCleaningEndMs)}`;
+    const time = `${formatCleaningTime(item.manualCleaningStartMs)}-${formatCleaningTime(item.manualCleaningEndMs)}`;
+    return { label, time };
+  }
+
+  function formatCleaningText(item) {
+    const parts = formatCleaningParts(item);
+    return parts ? `${parts.label} ${parts.time}` : "—";
   }
 
   function rowsAreConnected(items, index) {
@@ -1687,6 +1694,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     planFromXLS,
     titleFromFileName,
     formatTime,
+    formatCleaningParts,
     formatCleaningText,
     rowsAreConnected
   };
@@ -2144,8 +2152,15 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       return makeElement("div", `cell data-cell entryTime-cell${item.entryStartMs === null ? " empty" : ""}`, core.formatTime(item.entryStartMs) || "—");
     }
     if (key === "manualCleaning") {
-      const text = core.formatCleaningText(item);
-      return makeElement("div", `cell data-cell range-cell manualCleaning-cell${item.manualCleaning ? " yes" : ""}`, text);
+      const cell = makeElement("div", `cell data-cell range-cell manualCleaning-cell${item.manualCleaning ? " yes" : ""}`);
+      const parts = core.formatCleaningParts(item);
+      if (!parts) cell.textContent = "—";
+      else {
+        const stack = makeElement("span", "cleaning-stack");
+        stack.append(makeElement("span", "cleaning-label", parts.label), makeElement("span", "cleaning-time", parts.time));
+        cell.append(stack);
+      }
+      return cell;
     }
     if (key === "track") return makeElement("div", "cell data-cell track-cell", item.track || "—");
     if (key === "worker") {
@@ -2638,6 +2653,13 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     context.fillText(fitCanvasText(context, text, column.width - 6), column.x + column.width / 2, y);
   }
 
+  function drawCleaningCell(context, item, column, centerY, font, color, lineOffset) {
+    const parts = core.formatCleaningParts(item);
+    if (!parts) return drawCenteredText(context, "—", column, centerY, font, color);
+    drawCenteredText(context, parts.label, column, centerY - lineOffset, font, color);
+    drawCenteredText(context, parts.time, column, centerY + lineOffset, font, color);
+  }
+
   function drawCanvasVehicle(context, item, column, centerY) {
     const number = item.vehicleNumber || "待确认";
     const numberY = item.wheelSetting ? centerY - 7 : centerY;
@@ -2714,7 +2736,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
         else if (column.key === "vehicle") drawCanvasVehicle(context, item, column, centerY);
         else if (column.key === "track") drawCenteredText(context, item.track, column, centerY, "800 14px -apple-system, PingFang SC, Arial");
         else if (column.key === "worker") drawCenteredText(context, memberName(item.workerId), column, centerY, "650 13px -apple-system, PingFang SC, Arial");
-        else if (column.key === "manualCleaning") drawCenteredText(context, core.formatCleaningText(item), column, centerY, "700 10px -apple-system, PingFang SC, Arial", item.manualCleaning ? "#0d53bc" : "#9aa5b4");
+        else if (column.key === "manualCleaning") drawCleaningCell(context, item, column, centerY, "700 10px -apple-system, PingFang SC, Arial", item.manualCleaning ? "#0d53bc" : "#9aa5b4", 6);
       });
     });
     context.strokeStyle = "#d5dde8";
@@ -2854,7 +2876,8 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
         } else if (column.key === "worker") {
           drawCenteredText(context, memberName(item.workerId), column, centerY, `650 ${bodyFontSize * .92}px -apple-system, PingFang SC, Arial`);
         } else if (column.key === "manualCleaning") {
-          drawCenteredText(context, core.formatCleaningText(item), column, centerY, `750 ${Math.max(7, bodyFontSize * .78)}px -apple-system, PingFang SC, Arial`, item.manualCleaning ? "#0d53bc" : "#9aa5b4");
+          const cleaningFontSize = Math.max(7, bodyFontSize * .78);
+          drawCleaningCell(context, item, column, centerY, `750 ${cleaningFontSize}px -apple-system, PingFang SC, Arial`, item.manualCleaning ? "#0d53bc" : "#9aa5b4", cleaningFontSize * .62);
         }
       });
     });
@@ -3088,6 +3111,10 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
   function pdfCellMarkup(key, item, index) {
     if (key === "vehicle") return pdfVehicleMarkup(item, index);
     if (key === "sequence") return `<span class="sequence-badge">${index + 1}</span>`;
+    if (key === "manualCleaning") {
+      const parts = core.formatCleaningParts(item);
+      return parts ? `<span class="cleaning-stack"><span>${escapeHTML(parts.label)}</span><span>${escapeHTML(parts.time)}</span></span>` : "—";
+    }
     return escapeHTML(pdfCellText(key, item, index));
   }
 
@@ -3150,6 +3177,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       .vehicle-number { font-size: 1.08em; font-weight: 800; }
       .couple-badge { position: absolute; left: calc(100% + .4mm); top: -1.2mm; color: #1769e0; font-size: .55em; font-weight: 850; }
       .wheel-setting-tag { color: #0d53bc; font-size: .7em; font-weight: 750; white-space: nowrap; }
+      .cleaning-stack { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: .15em; white-space: nowrap; }
       .couple-mark { position: absolute; z-index: 3; left: 1mm; top: 50%; width: 3.2mm; height: 100%; overflow: visible; }
       .couple-mark path { fill: none; stroke: #111827; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
       .couple-train-mid { position: absolute; z-index: 4; left: 50%; top: calc(100% - 1.6mm); padding: 0 .8mm; color: #617086; background: white; font-size: .58em; font-weight: 650; line-height: 3.2mm; white-space: nowrap; transform: translateX(-50%); }
