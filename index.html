@@ -1237,6 +1237,13 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     return compact(value);
   }
 
+  function cleaningTrackLabel(value) {
+    const taskText = compact(value);
+    if (taskText.includes("人工清洗") || taskText.includes("人工洗")) return "20道洗车";
+    if (taskText.includes("自动清洗") || taskText.includes("自动洗")) return "10道洗车";
+    return "";
+  }
+
   function validOutboundTrain(value) {
     const normalized = compact(value).replace(/\\/g, "/");
     const invalid = new Set(["", "/", "-", "--", "库停", "库停.", "库停。", "无"]);
@@ -1487,12 +1494,16 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       }
 
       const manualCleaningRows = [];
+      const automaticCleaningRows = [];
       for (let row = rows.first; row <= rows.last; row += 1) {
         const taskText = `${compact(sheet.value(row, columns.repairTask))}${compact(sheet.value(row, columns.workItem))}`;
-        if (taskText.includes("人工清洗") || taskText.includes("人工洗")) manualCleaningRows.push(row);
+        const trackLabel = cleaningTrackLabel(taskText);
+        if (trackLabel === "20道洗车") manualCleaningRows.push(row);
+        else if (trackLabel === "10道洗车") automaticCleaningRows.push(row);
       }
-      const manualCleaningRange = rowTimeRange(sheet, manualCleaningRows, columns, planDate);
-      if (manualCleaningRows.length && (manualCleaningRange.startMs === null || manualCleaningRange.endMs === null)) {
+      const cleaningRows = manualCleaningRows.length ? manualCleaningRows : automaticCleaningRows;
+      const manualCleaningRange = rowTimeRange(sheet, cleaningRows, columns, planDate);
+      if (cleaningRows.length && (manualCleaningRange.startMs === null || manualCleaningRange.endMs === null)) {
         issues.push("洗车缺少开始或结束时间，请确认");
       }
 
@@ -1503,7 +1514,8 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
         startMs: uniqueTimes[0] ?? null,
         entryStartMs: entryRange.startMs,
         entryEndMs: entryRange.endMs,
-        manualCleaning: manualCleaningRows.length > 0,
+        manualCleaning: cleaningRows.length > 0,
+        cleaningTrackLabel: manualCleaningRows.length ? "20道洗车" : (automaticCleaningRows.length ? "10道洗车" : ""),
         manualCleaningStartMs: manualCleaningRange.startMs,
         manualCleaningEndMs: manualCleaningRange.endMs,
         track: threePowerTracks[0] || "",
@@ -1645,6 +1657,18 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
   }
 
+  function formatCleaningTime(timestamp) {
+    if (timestamp === null || !Number.isFinite(timestamp)) return "待确认";
+    const date = new Date(timestamp);
+    return `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
+  }
+
+  function formatCleaningText(item) {
+    if (!item || !item.manualCleaning) return "—";
+    const label = item.cleaningTrackLabel === "10道洗车" ? "10道洗车" : "20道洗车";
+    return `${label} ${formatCleaningTime(item.manualCleaningStartMs)}-${formatCleaningTime(item.manualCleaningEndMs)}`;
+  }
+
   function rowsAreConnected(items, index) {
     const current = items[index];
     const next = items[index + 1];
@@ -1655,6 +1679,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     compact,
     displayVehicleNumber,
     normalizedTrack,
+    cleaningTrackLabel,
     validOutboundTrain,
     parseCandidates,
     buildPlan,
@@ -1662,6 +1687,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     planFromXLS,
     titleFromFileName,
     formatTime,
+    formatCleaningText,
     rowsAreConnected
   };
   root.NightShiftCore = api;
@@ -1824,6 +1850,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       item.manualCleaning = Boolean(item.manualCleaning);
       if (!Object.prototype.hasOwnProperty.call(item, "manualCleaningStartMs")) item.manualCleaningStartMs = null;
       if (!Object.prototype.hasOwnProperty.call(item, "manualCleaningEndMs")) item.manualCleaningEndMs = null;
+      if (!Object.prototype.hasOwnProperty.call(item, "cleaningTrackLabel")) item.cleaningTrackLabel = item.manualCleaning ? "20道洗车" : "";
       if (!Object.prototype.hasOwnProperty.call(item, "workerId")) item.workerId = null;
       if (!Object.prototype.hasOwnProperty.call(item, "customRemark")) item.customRemark = "";
     });
@@ -2117,7 +2144,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
       return makeElement("div", `cell data-cell entryTime-cell${item.entryStartMs === null ? " empty" : ""}`, core.formatTime(item.entryStartMs) || "—");
     }
     if (key === "manualCleaning") {
-      const text = item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—";
+      const text = core.formatCleaningText(item);
       return makeElement("div", `cell data-cell range-cell manualCleaning-cell${item.manualCleaning ? " yes" : ""}`, text);
     }
     if (key === "track") return makeElement("div", "cell data-cell track-cell", item.track || "—");
@@ -2357,6 +2384,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     item.manualCleaning = manualCleaning;
     item.manualCleaningStartMs = manualCleaning ? manualCleaningStartMs : null;
     item.manualCleaningEndMs = manualCleaning ? manualCleaningEndMs : null;
+    item.cleaningTrackLabel = manualCleaning ? (item.cleaningTrackLabel || "20道洗车") : "";
     item.track = track;
     item.workerId = $("editWorker").value || null;
     item.issues = [];
@@ -2686,7 +2714,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
         else if (column.key === "vehicle") drawCanvasVehicle(context, item, column, centerY);
         else if (column.key === "track") drawCenteredText(context, item.track, column, centerY, "800 14px -apple-system, PingFang SC, Arial");
         else if (column.key === "worker") drawCenteredText(context, memberName(item.workerId), column, centerY, "650 13px -apple-system, PingFang SC, Arial");
-        else if (column.key === "manualCleaning") drawCenteredText(context, item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—", column, centerY, "700 10px -apple-system, PingFang SC, Arial", item.manualCleaning ? "#0d53bc" : "#9aa5b4");
+        else if (column.key === "manualCleaning") drawCenteredText(context, core.formatCleaningText(item), column, centerY, "700 10px -apple-system, PingFang SC, Arial", item.manualCleaning ? "#0d53bc" : "#9aa5b4");
       });
     });
     context.strokeStyle = "#d5dde8";
@@ -2826,7 +2854,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
         } else if (column.key === "worker") {
           drawCenteredText(context, memberName(item.workerId), column, centerY, `650 ${bodyFontSize * .92}px -apple-system, PingFang SC, Arial`);
         } else if (column.key === "manualCleaning") {
-          drawCenteredText(context, item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—", column, centerY, `750 ${Math.max(7, bodyFontSize * .78)}px -apple-system, PingFang SC, Arial`, item.manualCleaning ? "#0d53bc" : "#9aa5b4");
+          drawCenteredText(context, core.formatCleaningText(item), column, centerY, `750 ${Math.max(7, bodyFontSize * .78)}px -apple-system, PingFang SC, Arial`, item.manualCleaning ? "#0d53bc" : "#9aa5b4");
         }
       });
     });
@@ -3038,7 +3066,7 @@ textarea { min-height: 76px; padding-top: 10px; resize: vertical; }
     if (key === "time") return core.formatTime(item.startMs);
     if (key === "worker") return memberName(item.workerId);
     if (key === "entryTime") return core.formatTime(item.entryStartMs) || "—";
-    if (key === "manualCleaning") return item.manualCleaning ? formatTimeRange(item.manualCleaningStartMs, item.manualCleaningEndMs) : "—";
+    if (key === "manualCleaning") return core.formatCleaningText(item);
     if (key === "track") return item.track || "—";
     return "—";
   }
